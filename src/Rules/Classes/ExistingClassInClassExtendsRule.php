@@ -27,6 +27,7 @@ class ExistingClassInClassExtendsRule implements \PHPStan\Rules\Rule
 	/**
 	 * @param \PhpParser\Node\Stmt\Class_ $node
 	 * @param \PHPStan\Analyser\Scope $scope
+	 *
 	 * @return RuleError[]
 	 */
 	public function processNode(Node $node, Scope $scope): array
@@ -34,6 +35,7 @@ class ExistingClassInClassExtendsRule implements \PHPStan\Rules\Rule
 		if ($node->extends === null) {
 			return [];
 		}
+
 		return $this->classCaseSensitivityCheck->checkClassNames([new ClassNameNodePair((string) $node->extends, $node->extends)]);
 	}
 

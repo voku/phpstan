@@ -44,9 +44,13 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 		if (self::$container === null) {
 			$rootDir = __DIR__ . '/../..';
 			$containerFactory = new ContainerFactory($rootDir);
-			self::$container = $containerFactory->create($rootDir . '/tmp', [
-				$containerFactory->getConfigDirectory() . '/config.level7.neon',
-			], []);
+			self::$container = $containerFactory->create(
+				$rootDir . '/tmp',
+				[
+					$containerFactory->getConfigDirectory() . '/config.level7.neon',
+				],
+				[]
+			);
 		}
 
 		return self::$container;
@@ -56,12 +60,14 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 	{
 		/** @var \PHPStan\Parser\Parser $parser */
 		$parser = self::getContainer()->getService('directParser');
+
 		return $parser;
 	}
 
 	/**
 	 * @param \PHPStan\Type\DynamicMethodReturnTypeExtension[] $dynamicMethodReturnTypeExtensions
 	 * @param \PHPStan\Type\DynamicStaticMethodReturnTypeExtension[] $dynamicStaticMethodReturnTypeExtensions
+	 *
 	 * @return \PHPStan\Broker\Broker
 	 */
 	public function createBroker(
@@ -107,6 +113,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 			 * @param bool $isDeprecated
 			 * @param bool $isInternal
 			 * @param bool $isFinal
+			 *
 			 * @return PhpMethodReflection
 			 */
 			public function create(
@@ -176,7 +183,8 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 			 * @param bool $isDeprecated
 			 * @param bool $isInternal
 			 * @param bool $isFinal
-			 * @param string|false $filename
+			 * @param false|string $filename
+			 *
 			 * @return PhpFunctionReflection
 			 */
 			public function create(
@@ -208,9 +216,12 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 		};
 
 		$tagToService = static function (array $tags) {
-			return array_map(static function (string $serviceName) {
-				return self::getContainer()->getService($serviceName);
-			}, array_keys($tags));
+			return array_map(
+				static function (string $serviceName) {
+					return self::getContainer()->getService($serviceName);
+				},
+				array_keys($tags)
+			);
 		};
 
 		$currentWorkingDirectory = $this->getCurrentWorkingDirectory();
@@ -295,6 +306,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 	 * @param \PHPStan\Broker\Broker $broker
 	 * @param \PHPStan\Type\MethodTypeSpecifyingExtension[] $methodTypeSpecifyingExtensions
 	 * @param \PHPStan\Type\StaticMethodTypeSpecifyingExtension[] $staticMethodTypeSpecifyingExtensions
+	 *
 	 * @return \PHPStan\Analyser\TypeSpecifier
 	 */
 	public function createTypeSpecifier(
@@ -305,9 +317,12 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 	): TypeSpecifier
 	{
 		$tagToService = static function (array $tags) {
-			return array_map(static function (string $serviceName) {
-				return self::getContainer()->getService($serviceName);
-			}, array_keys($tags));
+			return array_map(
+				static function (string $serviceName) {
+					return self::getContainer()->getService($serviceName);
+				},
+				array_keys($tags)
+			);
 		};
 
 		return new TypeSpecifier(

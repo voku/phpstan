@@ -26,6 +26,7 @@ class SignatureMapParser
 	/**
 	 * @param mixed[] $map
 	 * @param string|null $className
+	 *
 	 * @return \PHPStan\Reflection\SignatureMap\FunctionSignature
 	 */
 	public function getFunctionSignature(array $map, ?string $className): FunctionSignature
@@ -35,9 +36,11 @@ class SignatureMapParser
 		foreach ($parameterSignatures as $parameterSignature) {
 			if ($parameterSignature->isVariadic()) {
 				$hasVariadic = true;
+
 				break;
 			}
 		}
+
 		return new FunctionSignature(
 			$parameterSignatures,
 			$this->getTypeFromString($map[0], $className),
@@ -76,6 +79,7 @@ class SignatureMapParser
 
 	/**
 	 * @param array<string, string> $parameterMap
+	 *
 	 * @return array<int, \PHPStan\Reflection\SignatureMap\ParameterSignature>
 	 */
 	private function getParameters(array $parameterMap): array
@@ -97,6 +101,7 @@ class SignatureMapParser
 
 	/**
 	 * @param string $parameterNameString
+	 *
 	 * @return mixed[]
 	 */
 	private function getParameterInfoFromName(string $parameterNameString): array

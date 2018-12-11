@@ -34,6 +34,7 @@ class UnionTypeGetInternalDynamicReturnTypeExtension implements DynamicMethodRet
 		}
 
 		$getterClosureType = $scope->getType($methodCall->args[1]->value);
+
 		return ParametersAcceptorSelector::selectSingle($getterClosureType->getCallableParametersAcceptors($scope))->getReturnType();
 	}
 

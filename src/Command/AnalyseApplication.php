@@ -42,7 +42,8 @@ class AnalyseApplication
 	 * @param \PHPStan\Command\ErrorFormatter\ErrorFormatter $errorFormatter
 	 * @param bool $defaultLevelUsed
 	 * @param bool $debug
-	 * @return int Error code.
+	 *
+	 * @return int error code
 	 */
 	public function analyse(
 		array $files,
@@ -78,13 +79,16 @@ class AnalyseApplication
 			$postFileCallback = null;
 		}
 
-		$errors = array_merge($errors, $this->analyser->analyse(
-			$files,
-			$onlyFiles,
-			$preFileCallback,
-			$postFileCallback,
-			$debug
-		));
+		$errors = array_merge(
+			$errors,
+			$this->analyser->analyse(
+				$files,
+				$onlyFiles,
+				$preFileCallback,
+				$postFileCallback,
+				$debug
+			)
+		);
 
 		if (isset($progressStarted) && $progressStarted) {
 			$style->progressFinish();

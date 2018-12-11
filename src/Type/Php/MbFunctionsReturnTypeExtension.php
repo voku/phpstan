@@ -21,15 +21,15 @@ class MbFunctionsReturnTypeExtension implements \PHPStan\Type\DynamicFunctionRet
 	/** @var string[] */
 	private $supportedEncodings;
 
-	/** @var int[]  */
+	/** @var int[] */
 	private $encodingPositionMap = [
-		'mb_http_output' => 1,
-		'mb_regex_encoding' => 1,
+		'mb_http_output'       => 1,
+		'mb_regex_encoding'    => 1,
 		'mb_internal_encoding' => 1,
-		'mb_encoding_aliases' => 1,
-		'mb_strlen' => 2,
-		'mb_chr' => 2,
-		'mb_ord' => 2,
+		'mb_encoding_aliases'  => 1,
+		'mb_strlen'            => 2,
+		'mb_chr'               => 2,
+		'mb_ord'               => 2,
 	];
 
 	public function __construct()
@@ -67,9 +67,14 @@ class MbFunctionsReturnTypeExtension implements \PHPStan\Type\DynamicFunctionRet
 		}
 
 		$strings = TypeUtils::getConstantStrings($scope->getType($functionCall->args[$positionEncodingParam - 1]->value));
-		$results = array_unique(array_map(function (ConstantStringType $encoding): bool {
-			return $this->isSupportedEncoding($encoding->getValue());
-		}, $strings));
+		$results = array_unique(
+			array_map(
+				function (ConstantStringType $encoding): bool {
+					return $this->isSupportedEncoding($encoding->getValue());
+				},
+				$strings
+			)
+		);
 
 		if ($returnType->equals(new UnionType([new StringType(), new BooleanType()]))) {
 			return count($results) === 1 ? new ConstantBooleanType($results[0]) : new BooleanType();

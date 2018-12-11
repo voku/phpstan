@@ -33,10 +33,12 @@ class CommandHelper
 		if ($memoryLimit !== null) {
 			if (\Nette\Utils\Strings::match($memoryLimit, '#^-?\d+[kMG]?$#i') === null) {
 				$errorOutput->writeln(sprintf('Invalid memory limit format "%s".', $memoryLimit));
+
 				throw new \PHPStan\Command\InceptionNotSuccessfulException();
 			}
 			if (ini_set('memory_limit', $memoryLimit) === false) {
 				$errorOutput->writeln(sprintf('Memory limit "%s" cannot be set.', $memoryLimit));
+
 				throw new \PHPStan\Command\InceptionNotSuccessfulException();
 			}
 		}
@@ -60,6 +62,7 @@ class CommandHelper
 				if (is_file($discoverableConfigFile)) {
 					$projectConfigFile = $discoverableConfigFile;
 					$errorOutput->writeln(sprintf('Note: Using configuration file %s.', $projectConfigFile));
+
 					break;
 				}
 			}
@@ -73,6 +76,7 @@ class CommandHelper
 		if (count($paths) === 0 && $pathsFile !== null) {
 			if (!file_exists($pathsFile)) {
 				$errorOutput->writeln(sprintf('Paths file %s does not exist.', $pathsFile));
+
 				throw new \PHPStan\Command\InceptionNotSuccessfulException();
 			}
 
@@ -81,22 +85,28 @@ class CommandHelper
 				throw new \PHPStan\ShouldNotHappenException();
 			}
 
-			$paths = array_values(array_filter(explode("\n", $pathsString), static function (string $path): bool {
-				return trim($path) !== '';
-			}));
+			$paths = array_values(
+				array_filter(
+					explode("\n", $pathsString),
+					static function (string $path): bool {
+						return trim($path) !== '';
+					}
+				)
+			);
 		}
 
 		$containerFactory = new ContainerFactory($currentWorkingDirectory);
 		if ($projectConfigFile !== null) {
 			if (!is_file($projectConfigFile)) {
 				$errorOutput->writeln(sprintf('Project config file at path %s does not exist.', $projectConfigFile));
+
 				throw new \PHPStan\Command\InceptionNotSuccessfulException();
 			}
 
 			$loader = (new LoaderFactory())->createLoader();
 			$projectConfig = $loader->load($projectConfigFile, null);
 			$defaultParameters = [
-				'rootDir' => $containerFactory->getRootDirectory(),
+				'rootDir'                 => $containerFactory->getRootDirectory(),
 				'currentWorkingDirectory' => $containerFactory->getCurrentWorkingDirectory(),
 			];
 
@@ -113,6 +123,7 @@ class CommandHelper
 
 		if (count($paths) === 0) {
 			$errorOutput->writeln('At least one path must be specified to analyse.');
+
 			throw new \PHPStan\Command\InceptionNotSuccessfulException();
 		}
 
@@ -121,6 +132,7 @@ class CommandHelper
 			$levelConfigFile = sprintf('%s/config.level%s.neon', $containerFactory->getConfigDirectory(), $level);
 			if (!is_file($levelConfigFile)) {
 				$errorOutput->writeln(sprintf('Level config file %s was not found.', $levelConfigFile));
+
 				throw new \PHPStan\Command\InceptionNotSuccessfulException();
 			}
 
@@ -135,12 +147,16 @@ class CommandHelper
 			$tmpDir = sys_get_temp_dir() . '/phpstan';
 			if (!@mkdir($tmpDir, 0777, true) && !is_dir($tmpDir)) {
 				$errorOutput->writeln(sprintf('Cannot create a temp directory %s', $tmpDir));
+
 				throw new \PHPStan\Command\InceptionNotSuccessfulException();
 			}
 		}
-		$paths = array_map(static function (string $path) use ($fileHelper): string {
-			return $fileHelper->absolutizePath($path);
-		}, $paths);
+		$paths = array_map(
+			static function (string $path) use ($fileHelper): string {
+				return $fileHelper->absolutizePath($path);
+			},
+			$paths
+		);
 		$container = $containerFactory->create($tmpDir, $additionalConfigFiles, $paths);
 		$memoryLimitFile = $container->parameters['memoryLimitFile'];
 		if (file_exists($memoryLimitFile)) {
@@ -168,6 +184,7 @@ class CommandHelper
 			$errorOutput->writeln(sprintf('* create your own <info>custom ruleset</info> by selecting which rules you want to check by copying the service definitions from the built-in config level files in <options=bold>%s</>.', $fileHelper->normalizePath(__DIR__ . '/../../conf')));
 			$errorOutput->writeln('  * in this case, don\'t forget to define parameter <options=bold>customRulesetUsed</> in your config file.');
 			$errorOutput->writeln('');
+
 			throw new \PHPStan\Command\InceptionNotSuccessfulException();
 		} elseif ((bool) $container->parameters['customRulesetUsed']) {
 			$defaultLevelUsed = false;
@@ -181,9 +198,12 @@ class CommandHelper
 
 		if (count($container->parameters['autoload_directories']) > 0) {
 			$robotLoader = new \Nette\Loaders\RobotLoader();
-			$robotLoader->acceptFiles = array_map(static function (string $extension): string {
-				return sprintf('*.%s', $extension);
-			}, $container->parameters['fileExtensions']);
+			$robotLoader->acceptFiles = array_map(
+				static function (string $extension): string {
+					return sprintf('*.%s', $extension);
+				},
+				$container->parameters['fileExtensions']
+			);
 
 			$robotLoader->setTempDirectory($tmpDir);
 			foreach ($container->parameters['autoload_directories'] as $directory) {
@@ -202,14 +222,17 @@ class CommandHelper
 			$bootstrapFile = $fileHelper->normalizePath($bootstrapFile);
 			if (!is_file($bootstrapFile)) {
 				$errorOutput->writeln(sprintf('Bootstrap file %s does not exist.', $bootstrapFile));
+
 				throw new \PHPStan\Command\InceptionNotSuccessfulException();
 			}
+
 			try {
 				(static function (string $file): void {
 					require_once $file;
 				})($bootstrapFile);
 			} catch (\Throwable $e) {
 				$errorOutput->writeln($e->getMessage());
+
 				throw new \PHPStan\Command\InceptionNotSuccessfulException();
 			}
 		}
@@ -221,6 +244,7 @@ class CommandHelper
 			$fileFinderResult = $fileFinder->findFiles($paths);
 		} catch (\PHPStan\File\PathNotFoundException $e) {
 			$errorOutput->writeln(sprintf('<error>%s</error>', $e->getMessage()));
+
 			throw new \PHPStan\Command\InceptionNotSuccessfulException($e->getMessage(), 0, $e);
 		}
 
@@ -241,13 +265,16 @@ class CommandHelper
 			return;
 		}
 
-		pcntl_signal(SIGINT, static function () use ($consoleStyle, $memoryLimitFile): void {
-			if (file_exists($memoryLimitFile)) {
-				@unlink($memoryLimitFile);
+		pcntl_signal(
+			SIGINT,
+			static function () use ($consoleStyle, $memoryLimitFile): void {
+				if (file_exists($memoryLimitFile)) {
+					@unlink($memoryLimitFile);
+				}
+				$consoleStyle->newLine();
+				exit(1);
 			}
-			$consoleStyle->newLine();
-			exit(1);
-		});
+		);
 	}
 
 }

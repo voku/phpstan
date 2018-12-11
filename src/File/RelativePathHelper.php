@@ -63,10 +63,12 @@ class RelativePathHelper
 				if (!isset($pathToTrimArray[$i])) {
 					if ($pathNumber !== 0) {
 						$pathToTrimArray = $pathTempParts;
+
 						continue 2;
 					}
 				} elseif ($pathToTrimArray[$i] !== $pathPart) {
 					$pathToTrimArray = $pathTempParts;
+
 					continue 2;
 				}
 

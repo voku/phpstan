@@ -38,6 +38,7 @@ class NonexistentOffsetInArrayDimFetchRule implements \PHPStan\Rules\Rule
 	/**
 	 * @param \PhpParser\Node\Expr\ArrayDimFetch $node
 	 * @param \PHPStan\Analyser\Scope $scope
+	 *
 	 * @return RuleError[]
 	 */
 	public function processNode(\PhpParser\Node $node, Scope $scope): array
@@ -76,19 +77,23 @@ class NonexistentOffsetInArrayDimFetchRule implements \PHPStan\Rules\Rule
 		if (!$isOffsetAccessible->yes()) {
 			if ($dimType !== null) {
 				return [
-					RuleErrorBuilder::message(sprintf(
-						'Cannot access offset %s on %s.',
-						$dimType->describe(VerbosityLevel::value()),
-						$type->describe(VerbosityLevel::value())
-					))->build(),
+					RuleErrorBuilder::message(
+						sprintf(
+							'Cannot access offset %s on %s.',
+							$dimType->describe(VerbosityLevel::value()),
+							$type->describe(VerbosityLevel::value())
+						)
+					)->build(),
 				];
 			}
 
 			return [
-				RuleErrorBuilder::message(sprintf(
-					'Cannot access an offset on %s.',
-					$type->describe(VerbosityLevel::typeOnly())
-				))->build(),
+				RuleErrorBuilder::message(
+					sprintf(
+						'Cannot access an offset on %s.',
+						$type->describe(VerbosityLevel::typeOnly())
+					)
+				)->build(),
 			];
 		}
 
@@ -104,6 +109,7 @@ class NonexistentOffsetInArrayDimFetchRule implements \PHPStan\Rules\Rule
 				foreach ($constantArrays as $constantArray) {
 					if ($constantArray->hasOffsetValueType($dimType)->no()) {
 						$report = true;
+
 						break;
 					}
 				}
@@ -115,13 +121,16 @@ class NonexistentOffsetInArrayDimFetchRule implements \PHPStan\Rules\Rule
 				if ($dimType instanceof BenevolentUnionType) {
 					if ($innerType->hasOffsetValueType($dimType)->no()) {
 						$report = true;
+
 						break;
 					}
+
 					continue;
 				}
 				foreach (TypeUtils::flattenTypes($dimType) as $innerDimType) {
 					if ($innerType->hasOffsetValueType($innerDimType)->no()) {
 						$report = true;
+
 						break;
 					}
 				}

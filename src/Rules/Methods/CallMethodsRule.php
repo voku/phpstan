@@ -54,6 +54,7 @@ class CallMethodsRule implements \PHPStan\Rules\Rule
 	/**
 	 * @param \PhpParser\Node\Expr\MethodCall $node
 	 * @param \PHPStan\Analyser\Scope $scope
+	 *
 	 * @return (string|\PHPStan\Rules\RuleError)[]
 	 */
 	public function processNode(Node $node, Scope $scope): array
@@ -136,26 +137,29 @@ class CallMethodsRule implements \PHPStan\Rules\Rule
 			);
 		}
 
-		$errors = array_merge($errors, $this->check->check(
-			ParametersAcceptorSelector::selectFromArgs(
+		$errors = array_merge(
+			$errors,
+			$this->check->check(
+				ParametersAcceptorSelector::selectFromArgs(
+					$scope,
+					$node->args,
+					$methodReflection->getVariants()
+				),
 				$scope,
-				$node->args,
-				$methodReflection->getVariants()
-			),
-			$scope,
-			$node,
-			[
-				'Method ' . $messagesMethodName . ' invoked with %d parameter, %d required.',
-				'Method ' . $messagesMethodName . ' invoked with %d parameters, %d required.',
-				'Method ' . $messagesMethodName . ' invoked with %d parameter, at least %d required.',
-				'Method ' . $messagesMethodName . ' invoked with %d parameters, at least %d required.',
-				'Method ' . $messagesMethodName . ' invoked with %d parameter, %d-%d required.',
-				'Method ' . $messagesMethodName . ' invoked with %d parameters, %d-%d required.',
-				'Parameter #%d %s of method ' . $messagesMethodName . ' expects %s, %s given.',
-				'Result of method ' . $messagesMethodName . ' (void) is used.',
-				'Parameter #%d %s of method ' . $messagesMethodName . ' is passed by reference, so it expects variables only.',
-			]
-		));
+				$node,
+				[
+					'Method ' . $messagesMethodName . ' invoked with %d parameter, %d required.',
+					'Method ' . $messagesMethodName . ' invoked with %d parameters, %d required.',
+					'Method ' . $messagesMethodName . ' invoked with %d parameter, at least %d required.',
+					'Method ' . $messagesMethodName . ' invoked with %d parameters, at least %d required.',
+					'Method ' . $messagesMethodName . ' invoked with %d parameter, %d-%d required.',
+					'Method ' . $messagesMethodName . ' invoked with %d parameters, %d-%d required.',
+					'Parameter #%d %s of method ' . $messagesMethodName . ' expects %s, %s given.',
+					'Result of method ' . $messagesMethodName . ' (void) is used.',
+					'Parameter #%d %s of method ' . $messagesMethodName . ' is passed by reference, so it expects variables only.',
+				]
+			)
+		);
 
 		if (
 			$this->checkFunctionNameCase

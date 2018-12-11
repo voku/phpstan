@@ -11,7 +11,7 @@ class Error
 	/** @var string */
 	private $file;
 
-	/** @var int|NULL */
+	/** @var int|null */
 	private $line;
 
 	/** @var bool */

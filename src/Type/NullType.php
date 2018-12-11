@@ -32,7 +32,7 @@ class NullType implements ConstantScalarType
 	 */
 	public function getValue()
 	{
-		return null;
+
 	}
 
 	public function generalize(): Type
@@ -119,11 +119,13 @@ class NullType implements ConstantScalarType
 	public function setOffsetValueType(?Type $offsetType, Type $valueType): Type
 	{
 		$array = new ConstantArrayType([], []);
+
 		return $array->setOffsetValueType($offsetType, $valueType);
 	}
 
 	/**
 	 * @param mixed[] $properties
+	 *
 	 * @return Type
 	 */
 	public static function __set_state(array $properties): Type

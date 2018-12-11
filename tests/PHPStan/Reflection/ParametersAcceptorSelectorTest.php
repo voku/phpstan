@@ -115,10 +115,12 @@ class ParametersAcceptorSelectorTest extends \PHPStan\Testing\TestCase
 					new NativeParameterReflection(
 						'event|args',
 						true,
-						new UnionType([
-							new ArrayType(new IntegerType(), new MixedType()),
-							new StringType(),
-						]),
+						new UnionType(
+							[
+								new ArrayType(new IntegerType(), new MixedType()),
+								new StringType(),
+							]
+						),
 						PassedByReference::createNo(),
 						true
 					),

@@ -19,12 +19,12 @@ class ReplaceFunctionsDynamicReturnTypeExtension implements DynamicFunctionRetur
 
 	/** @var array<string, int> */
 	private $functions = [
-		'preg_replace' => 2,
-		'preg_replace_callback' => 2,
+		'preg_replace'                => 2,
+		'preg_replace_callback'       => 2,
 		'preg_replace_callback_array' => 1,
-		'str_replace' => 2,
-		'str_ireplace' => 2,
-		'substr_replace' => 0,
+		'str_replace'                 => 2,
+		'str_ireplace'                => 2,
+		'substr_replace'              => 0,
 	];
 
 	public function isFunctionSupported(FunctionReflection $functionReflection): bool
@@ -77,6 +77,7 @@ class ReplaceFunctionsDynamicReturnTypeExtension implements DynamicFunctionRetur
 			if ($subjectArgumentType instanceof ArrayType) {
 				return $subjectArgumentType->generalizeValues();
 			}
+
 			return $subjectArgumentType;
 		}
 

@@ -38,6 +38,7 @@ class ArrayPopFunctionReturnTypeExtension implements \PHPStan\Type\DynamicFuncti
 				$arrayKeyTypes = $constantArray->getKeyTypes();
 				if (count($arrayKeyTypes) === 0) {
 					$valueTypes[] = new NullType();
+
 					continue;
 				}
 

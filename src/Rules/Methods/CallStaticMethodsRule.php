@@ -68,6 +68,7 @@ class CallStaticMethodsRule implements \PHPStan\Rules\Rule
 	/**
 	 * @param \PhpParser\Node\Expr\StaticCall $node
 	 * @param \PHPStan\Analyser\Scope $scope
+	 *
 	 * @return (string|\PHPStan\Rules\RuleError)[]
 	 */
 	public function processNode(Node $node, Scope $scope): array
@@ -127,9 +128,8 @@ class CallStaticMethodsRule implements \PHPStan\Rules\Rule
 					return [
 						sprintf('Call to static method %s() on an unknown class %s.', $methodName, $className),
 					];
-				} else {
-					$errors = $this->classCaseSensitivityCheck->checkClassNames([new ClassNameNodePair($className, $class)]);
 				}
+					$errors = $this->classCaseSensitivityCheck->checkClassNames([new ClassNameNodePair($className, $class)]);
 
 				$classReflection = $this->broker->getClass($className);
 				$isInterface = $classReflection->isInterface();
@@ -160,9 +160,12 @@ class CallStaticMethodsRule implements \PHPStan\Rules\Rule
 		$classType = TypeCombinator::remove($classType, new StringType());
 
 		if (!$classType->canCallMethods()->yes()) {
-			return array_merge($errors, [
-				sprintf('Cannot call static method %s() on %s.', $methodName, $typeForDescribe->describe(VerbosityLevel::typeOnly())),
-			]);
+			return array_merge(
+				$errors,
+				[
+					sprintf('Cannot call static method %s() on %s.', $methodName, $typeForDescribe->describe(VerbosityLevel::typeOnly())),
+				]
+			);
 		}
 
 		if (!$classType->hasMethod($methodName)->yes()) {
@@ -180,13 +183,16 @@ class CallStaticMethodsRule implements \PHPStan\Rules\Rule
 				}
 			}
 
-			return array_merge($errors, [
-				sprintf(
-					'Call to an undefined static method %s::%s().',
-					$typeForDescribe->describe(VerbosityLevel::typeOnly()),
-					$methodName
-				),
-			]);
+			return array_merge(
+				$errors,
+				[
+					sprintf(
+						'Call to an undefined static method %s::%s().',
+						$typeForDescribe->describe(VerbosityLevel::typeOnly()),
+						$methodName
+					),
+				]
+			);
 		}
 
 		$method = $classType->getMethod($methodName, $scope);
@@ -202,26 +208,32 @@ class CallStaticMethodsRule implements \PHPStan\Rules\Rule
 					&& !$scope->getClassReflection()->isSubclassOf($classType->getClassName())
 				)
 			) {
-				return array_merge($errors, [
-					sprintf(
-						'Static call to instance method %s::%s().',
-						$method->getDeclaringClass()->getDisplayName(),
-						$method->getName()
-					),
-				]);
+				return array_merge(
+					$errors,
+					[
+						sprintf(
+							'Static call to instance method %s::%s().',
+							$method->getDeclaringClass()->getDisplayName(),
+							$method->getName()
+						),
+					]
+				);
 			}
 		}
 
 		if (!$scope->canCallMethod($method)) {
-			$errors = array_merge($errors, [
-				sprintf(
-					'Call to %s %s %s() of class %s.',
-					$method->isPrivate() ? 'private' : 'protected',
-					$method->isStatic() ? 'static method' : 'method',
-					$method->getName(),
-					$method->getDeclaringClass()->getDisplayName()
-				),
-			]);
+			$errors = array_merge(
+				$errors,
+				[
+					sprintf(
+						'Call to %s %s %s() of class %s.',
+						$method->isPrivate() ? 'private' : 'protected',
+						$method->isStatic() ? 'static method' : 'method',
+						$method->getName(),
+						$method->getDeclaringClass()->getDisplayName()
+					),
+				]
+			);
 		}
 
 		if ($isInterface && $method->isStatic()) {
@@ -245,26 +257,29 @@ class CallStaticMethodsRule implements \PHPStan\Rules\Rule
 			$method->getDeclaringClass()->getDisplayName() . '::' . $method->getName() . '()'
 		);
 
-		$errors = array_merge($errors, $this->check->check(
-			ParametersAcceptorSelector::selectFromArgs(
+		$errors = array_merge(
+			$errors,
+			$this->check->check(
+				ParametersAcceptorSelector::selectFromArgs(
+					$scope,
+					$node->args,
+					$method->getVariants()
+				),
 				$scope,
-				$node->args,
-				$method->getVariants()
-			),
-			$scope,
-			$node,
-			[
-				$displayMethodName . ' invoked with %d parameter, %d required.',
-				$displayMethodName . ' invoked with %d parameters, %d required.',
-				$displayMethodName . ' invoked with %d parameter, at least %d required.',
-				$displayMethodName . ' invoked with %d parameters, at least %d required.',
-				$displayMethodName . ' invoked with %d parameter, %d-%d required.',
-				$displayMethodName . ' invoked with %d parameters, %d-%d required.',
-				'Parameter #%d %s of ' . $lowercasedMethodName . ' expects %s, %s given.',
-				'Result of ' . $lowercasedMethodName . ' (void) is used.',
-				'Parameter #%d %s of ' . $lowercasedMethodName . ' is passed by reference, so it expects variables only.',
-			]
-		));
+				$node,
+				[
+					$displayMethodName . ' invoked with %d parameter, %d required.',
+					$displayMethodName . ' invoked with %d parameters, %d required.',
+					$displayMethodName . ' invoked with %d parameter, at least %d required.',
+					$displayMethodName . ' invoked with %d parameters, at least %d required.',
+					$displayMethodName . ' invoked with %d parameter, %d-%d required.',
+					$displayMethodName . ' invoked with %d parameters, %d-%d required.',
+					'Parameter #%d %s of ' . $lowercasedMethodName . ' expects %s, %s given.',
+					'Result of ' . $lowercasedMethodName . ' (void) is used.',
+					'Parameter #%d %s of ' . $lowercasedMethodName . ' is passed by reference, so it expects variables only.',
+				]
+			)
+		);
 
 		if (
 			$this->checkFunctionNameCase

@@ -22,6 +22,7 @@ class DirectParser implements Parser
 
 	/**
 	 * @param string $file path to a file to parse
+	 *
 	 * @return \PhpParser\Node[]
 	 */
 	public function parseFile(string $file): array
@@ -30,11 +31,13 @@ class DirectParser implements Parser
 		if ($contents === false) {
 			throw new \PHPStan\ShouldNotHappenException();
 		}
+
 		return $this->parseString($contents);
 	}
 
 	/**
 	 * @param string $sourceCode
+	 *
 	 * @return \PhpParser\Node[]
 	 */
 	public function parseString(string $sourceCode): array
@@ -47,6 +50,7 @@ class DirectParser implements Parser
 		if ($nodes === null) {
 			throw new \PHPStan\ShouldNotHappenException();
 		}
+
 		return $this->traverser->traverse($nodes);
 	}
 

@@ -26,7 +26,7 @@ class FakeBuiltinMethodReflection implements BuiltinMethodReflection
 	}
 
 	/**
-	 * @return string|false
+	 * @return false|string
 	 */
 	public function getFileName()
 	{
@@ -39,7 +39,7 @@ class FakeBuiltinMethodReflection implements BuiltinMethodReflection
 	}
 
 	/**
-	 * @return int|false
+	 * @return false|int
 	 */
 	public function getStartLine()
 	{
@@ -47,7 +47,7 @@ class FakeBuiltinMethodReflection implements BuiltinMethodReflection
 	}
 
 	/**
-	 * @return int|false
+	 * @return false|int
 	 */
 	public function getEndLine()
 	{
@@ -55,7 +55,7 @@ class FakeBuiltinMethodReflection implements BuiltinMethodReflection
 	}
 
 	/**
-	 * @return string|false
+	 * @return false|string
 	 */
 	public function getDocComment()
 	{

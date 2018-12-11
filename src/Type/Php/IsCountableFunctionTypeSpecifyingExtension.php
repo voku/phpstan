@@ -36,10 +36,12 @@ class IsCountableFunctionTypeSpecifyingExtension implements FunctionTypeSpecifyi
 
 		return $this->typeSpecifier->create(
 			$node->args[0]->value,
-			new UnionType([
-				new ArrayType(new MixedType(), new MixedType()),
-				new ObjectType(\Countable::class),
-			]),
+			new UnionType(
+				[
+					new ArrayType(new MixedType(), new MixedType()),
+					new ObjectType(\Countable::class),
+				]
+			),
 			$context
 		);
 	}

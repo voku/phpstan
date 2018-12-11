@@ -22,7 +22,8 @@ class CheckstyleErrorFormatter implements ErrorFormatter
 	 *
 	 * @param \PHPStan\Command\AnalysisResult $analysisResult
 	 * @param \Symfony\Component\Console\Style\OutputStyle $style
-	 * @return int Error code.
+	 *
+	 * @return int error code
 	 */
 	public function formatErrors(
 		AnalysisResult $analysisResult,
@@ -33,17 +34,21 @@ class CheckstyleErrorFormatter implements ErrorFormatter
 		$style->writeln('<checkstyle>');
 
 		foreach ($this->groupByFile($analysisResult) as $relativeFilePath => $errors) {
-			$style->writeln(sprintf(
-				'<file name="%s">',
-				$this->escape($relativeFilePath)
-			));
+			$style->writeln(
+				sprintf(
+					'<file name="%s">',
+					$this->escape($relativeFilePath)
+				)
+			);
 
 			foreach ($errors as $error) {
-				$style->writeln(sprintf(
-					'  <error line="%d" column="1" severity="error" message="%s" />',
-					$this->escape((string) $error->getLine()),
-					$this->escape((string) $error->getMessage())
-				));
+				$style->writeln(
+					sprintf(
+						'  <error line="%d" column="1" severity="error" message="%s" />',
+						$this->escape((string) $error->getLine()),
+						$this->escape((string) $error->getMessage())
+					)
+				);
 			}
 			$style->writeln('</file>');
 		}
@@ -57,6 +62,7 @@ class CheckstyleErrorFormatter implements ErrorFormatter
 	 * Escapes values for using in XML
 	 *
 	 * @param string $string
+	 *
 	 * @return string
 	 */
 	protected function escape(string $string): string
@@ -68,8 +74,9 @@ class CheckstyleErrorFormatter implements ErrorFormatter
 	 * Group errors by file
 	 *
 	 * @param AnalysisResult $analysisResult
-	 * @return array<string, array> Array that have as key the relative path of file
-	 *                              and as value an array with occured errors.
+	 *
+	 * @return array<string, array> array that have as key the relative path of file
+	 *                              and as value an array with occured errors
 	 */
 	private function groupByFile(AnalysisResult $analysisResult): array
 	{

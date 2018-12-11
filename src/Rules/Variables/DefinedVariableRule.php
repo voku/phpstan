@@ -32,6 +32,7 @@ class DefinedVariableRule implements \PHPStan\Rules\Rule
 	/**
 	 * @param \PhpParser\Node\Expr\Variable $node
 	 * @param \PHPStan\Analyser\Scope $scope
+	 *
 	 * @return string[]
 	 */
 	public function processNode(Node $node, Scope $scope): array
@@ -40,10 +41,14 @@ class DefinedVariableRule implements \PHPStan\Rules\Rule
 			return [];
 		}
 
-		if ($this->cliArgumentsVariablesRegistered && in_array($node->name, [
-			'argc',
-			'argv',
-		], true)) {
+		if ($this->cliArgumentsVariablesRegistered && in_array(
+			$node->name,
+			[
+				'argc',
+				'argv',
+			],
+			true
+		)) {
 			$isInMain = !$scope->isInClass() && !$scope->isInAnonymousFunction() && $scope->getFunction() === null;
 			if ($isInMain) {
 				return [];

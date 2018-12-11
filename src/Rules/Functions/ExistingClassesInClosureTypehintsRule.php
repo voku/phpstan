@@ -27,6 +27,7 @@ class ExistingClassesInClosureTypehintsRule implements \PHPStan\Rules\Rule
 	/**
 	 * @param \PhpParser\Node\Expr\Closure $node
 	 * @param \PHPStan\Analyser\Scope $scope
+	 *
 	 * @return RuleError[]
 	 */
 	public function processNode(Node $node, Scope $scope): array

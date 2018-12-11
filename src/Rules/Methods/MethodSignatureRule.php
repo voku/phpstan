@@ -39,6 +39,7 @@ class MethodSignatureRule implements \PHPStan\Rules\Rule
 	/**
 	 * @param \PhpParser\Node\Stmt\ClassMethod $node
 	 * @param \PHPStan\Analyser\Scope $scope
+	 *
 	 * @return string[]
 	 */
 	public function processNode(Node $node, Scope $scope): array
@@ -110,6 +111,7 @@ class MethodSignatureRule implements \PHPStan\Rules\Rule
 	 * @param string $methodName
 	 * @param \PHPStan\Reflection\ClassReflection $class
 	 * @param \PHPStan\Analyser\Scope $scope
+	 *
 	 * @return \PHPStan\Reflection\MethodReflection[]
 	 */
 	private function collectParentMethods(string $methodName, ClassReflection $class, Scope $scope): array
@@ -153,6 +155,7 @@ class MethodSignatureRule implements \PHPStan\Rules\Rule
 	/**
 	 * @param \PHPStan\Reflection\ParameterReflection[] $parameters
 	 * @param \PHPStan\Reflection\ParameterReflection[] $parentParameters
+	 *
 	 * @return array<int, TrinaryLogic>
 	 */
 	private function checkParameterTypeCompatibility(

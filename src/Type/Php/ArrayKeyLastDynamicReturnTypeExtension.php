@@ -38,6 +38,7 @@ class ArrayKeyLastDynamicReturnTypeExtension implements \PHPStan\Type\DynamicFun
 				$arrayKeyTypes = $constantArray->getKeyTypes();
 				if (count($arrayKeyTypes) === 0) {
 					$keyTypes[] = new NullType();
+
 					continue;
 				}
 

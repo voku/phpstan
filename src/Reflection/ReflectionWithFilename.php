@@ -6,7 +6,7 @@ interface ReflectionWithFilename
 {
 
 	/**
-	 * @return string|false
+	 * @return false|string
 	 */
 	public function getFileName();
 

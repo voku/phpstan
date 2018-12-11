@@ -25,6 +25,7 @@ class UnusedClosureUsesRule implements \PHPStan\Rules\Rule
 	/**
 	 * @param \PhpParser\Node\Expr\Closure $node
 	 * @param \PHPStan\Analyser\Scope $scope
+	 *
 	 * @return string[]
 	 */
 	public function processNode(Node $node, Scope $scope): array
@@ -35,12 +36,16 @@ class UnusedClosureUsesRule implements \PHPStan\Rules\Rule
 
 		return $this->check->getUnusedParameters(
 			$scope,
-			array_map(static function (Node\Expr\ClosureUse $use): string {
-				if (!is_string($use->var->name)) {
-					throw new \PHPStan\ShouldNotHappenException();
-				}
-				return $use->var->name;
-			}, $node->uses),
+			array_map(
+				static function (Node\Expr\ClosureUse $use): string {
+					if (!is_string($use->var->name)) {
+						throw new \PHPStan\ShouldNotHappenException();
+					}
+
+					return $use->var->name;
+				},
+				$node->uses
+			),
 			$node->stmts,
 			'Anonymous function has an unused use $%s.'
 		);

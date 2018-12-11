@@ -23,8 +23,7 @@ use PHPStan\Type\MixedType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypehintHelper;
 
-class PhpClassReflectionExtension
-	implements PropertiesClassReflectionExtension, MethodsClassReflectionExtension, BrokerAwareExtension
+class PhpClassReflectionExtension implements PropertiesClassReflectionExtension, MethodsClassReflectionExtension, BrokerAwareExtension
 {
 
 	/** @var \PHPStan\Reflection\Php\PhpMethodReflectionFactory */
@@ -218,15 +217,11 @@ class PhpClassReflectionExtension
 			return true;
 		}
 
-		if ($methodName === '__get' && UniversalObjectCratesClassReflectionExtension::isUniversalObjectCrate(
+		return $methodName === '__get' && UniversalObjectCratesClassReflectionExtension::isUniversalObjectCrate(
 			$this->broker,
 			$this->broker->getUniversalObjectCratesClasses(),
 			$classReflection
-		)) {
-			return true;
-		}
-
-		return false;
+		);
 	}
 
 	public function getNativeMethod(ClassReflection $classReflection, string $methodName): MethodReflection
@@ -294,21 +289,25 @@ class PhpClassReflectionExtension
 			while ($this->signatureMapProvider->hasFunctionSignature($variantName)) {
 				$methodSignature = $this->signatureMapProvider->getFunctionSignature($variantName, $declaringClassName);
 				$variants[] = new FunctionVariant(
-					array_map(static function (ParameterSignature $parameterSignature): NativeParameterReflection {
-						return new NativeParameterReflection(
-							$parameterSignature->getName(),
-							$parameterSignature->isOptional(),
-							$parameterSignature->getType(),
-							$parameterSignature->passedByReference(),
-							$parameterSignature->isVariadic()
-						);
-					}, $methodSignature->getParameters()),
+					array_map(
+						static function (ParameterSignature $parameterSignature): NativeParameterReflection {
+							return new NativeParameterReflection(
+								$parameterSignature->getName(),
+								$parameterSignature->isOptional(),
+								$parameterSignature->getType(),
+								$parameterSignature->passedByReference(),
+								$parameterSignature->isVariadic()
+							);
+						},
+						$methodSignature->getParameters()
+					),
 					$methodSignature->isVariadic(),
 					$methodSignature->getReturnType()
 				);
 				$i++;
 				$variantName = sprintf($signatureMapMethodName . '\'' . $i);
 			}
+
 			return new NativeMethodReflection(
 				$this->broker,
 				$declaringClass,
@@ -345,9 +344,12 @@ class PhpClassReflectionExtension
 					$phpDocBlock->getTrait(),
 					$phpDocBlock->getDocComment()
 				);
-				$phpDocParameterTypes = array_map(static function (ParamTag $tag): Type {
-					return $tag->getType();
-				}, $resolvedPhpDoc->getParamTags());
+				$phpDocParameterTypes = array_map(
+					static function (ParamTag $tag): Type {
+						return $tag->getType();
+					},
+					$resolvedPhpDoc->getParamTags()
+				);
 				$nativeReturnType = TypehintHelper::decideTypeFromReflection(
 					$methodReflection->getReturnType(),
 					null,
@@ -469,6 +471,7 @@ class PhpClassReflectionExtension
 
 	/**
 	 * @param \ReflectionClass $class
+	 *
 	 * @return \ReflectionClass[]
 	 */
 	private function collectTraits(\ReflectionClass $class): array

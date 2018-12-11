@@ -140,7 +140,7 @@ class PhpMethodReflection implements MethodReflection, DeprecatableReflection, I
 	}
 
 	/**
-	 * @return string|false
+	 * @return false|string
 	 */
 	public function getDocComment()
 	{
@@ -179,6 +179,7 @@ class PhpMethodReflection implements MethodReflection, DeprecatableReflection, I
 				$correctName = $this->getMethodNameWithCorrectCase($name, $traitTarget);
 				if ($correctName !== null) {
 					$name = $correctName;
+
 					break;
 				}
 			}
@@ -231,12 +232,15 @@ class PhpMethodReflection implements MethodReflection, DeprecatableReflection, I
 	private function getParameters(): array
 	{
 		if ($this->parameters === null) {
-			$this->parameters = array_map(function (\ReflectionParameter $reflection) {
-				return new PhpParameterReflection(
-					$reflection,
-					$this->phpDocParameterTypes[$reflection->getName()] ?? null
-				);
-			}, $this->reflection->getParameters());
+			$this->parameters = array_map(
+				function (\ReflectionParameter $reflection) {
+					return new PhpParameterReflection(
+						$reflection,
+						$this->phpDocParameterTypes[$reflection->getName()] ?? null
+					);
+				},
+				$this->reflection->getParameters()
+			);
 		}
 
 		return $this->parameters;
@@ -259,6 +263,7 @@ class PhpMethodReflection implements MethodReflection, DeprecatableReflection, I
 				$nodes = $this->parser->parseFile($filename);
 				$result = $this->callsFuncGetArgs($declaringClass, $nodes);
 				$this->cache->save($key, $result);
+
 				return $result;
 			}
 
@@ -271,6 +276,7 @@ class PhpMethodReflection implements MethodReflection, DeprecatableReflection, I
 	/**
 	 * @param ClassReflection $declaringClass
 	 * @param mixed $nodes
+	 *
 	 * @return bool
 	 */
 	private function callsFuncGetArgs(ClassReflection $declaringClass, $nodes): bool

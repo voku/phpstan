@@ -175,6 +175,7 @@ class ConstantArrayType extends ArrayType implements ConstantType
 
 	/**
 	 * @param \PHPStan\Reflection\ClassMemberAccessAnswerer $scope
+	 *
 	 * @return \PHPStan\Reflection\ParametersAcceptor[]
 	 */
 	public function getCallableParametersAcceptors(ClassMemberAccessAnswerer $scope): array
@@ -295,6 +296,7 @@ class ConstantArrayType extends ArrayType implements ConstantType
 					unset($newKeyTypes[$i]);
 					$newValueTypes = $this->valueTypes;
 					unset($newValueTypes[$i]);
+
 					return new self(array_values($newKeyTypes), array_values($newValueTypes), $this->nextAutoIndex);
 				}
 			}
@@ -360,14 +362,18 @@ class ConstantArrayType extends ArrayType implements ConstantType
 
 		if (!$preserveKeys) {
 			$i = 0;
-			$keyTypes = array_map(static function (ConstantScalarType $keyType) use (&$i): ConstantScalarType {
-				if ($keyType instanceof ConstantIntegerType) {
-					$i++;
-					return new ConstantIntegerType($i - 1);
-				}
+			$keyTypes = array_map(
+				static function (ConstantScalarType $keyType) use (&$i): ConstantScalarType {
+					if ($keyType instanceof ConstantIntegerType) {
+						$i++;
 
-				return $keyType;
-			}, $keyTypes);
+						return new ConstantIntegerType($i - 1);
+					}
+
+					return $keyType;
+				},
+				$keyTypes
+			);
 		}
 
 		$nextAutoIndex = 0;
@@ -482,6 +488,7 @@ class ConstantArrayType extends ArrayType implements ConstantType
 				$append
 			);
 		};
+
 		return $level->handle(
 			function () use ($level): string {
 				return parent::describe($level);
@@ -497,6 +504,7 @@ class ConstantArrayType extends ArrayType implements ConstantType
 
 	/**
 	 * @param mixed[] $properties
+	 *
 	 * @return Type
 	 */
 	public static function __set_state(array $properties): Type

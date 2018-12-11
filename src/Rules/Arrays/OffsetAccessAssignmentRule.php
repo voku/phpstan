@@ -28,6 +28,7 @@ class OffsetAccessAssignmentRule implements \PHPStan\Rules\Rule
 	/**
 	 * @param \PhpParser\Node\Expr\ArrayDimFetch $node
 	 * @param \PHPStan\Analyser\Scope $scope
+	 *
 	 * @return string[]
 	 */
 	public function processNode(\PhpParser\Node $node, Scope $scope): array
@@ -47,6 +48,7 @@ class OffsetAccessAssignmentRule implements \PHPStan\Rules\Rule
 			'',
 			static function (Type $varType) use ($potentialDimType): bool {
 				$arrayDimType = $varType->setOffsetValueType($potentialDimType, new MixedType());
+
 				return !($arrayDimType instanceof ErrorType);
 			}
 		);
@@ -59,6 +61,7 @@ class OffsetAccessAssignmentRule implements \PHPStan\Rules\Rule
 				'',
 				static function (Type $dimType) use ($varType): bool {
 					$arrayDimType = $varType->setOffsetValueType($dimType, new MixedType());
+
 					return !($arrayDimType instanceof ErrorType);
 				}
 			);

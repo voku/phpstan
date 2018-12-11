@@ -38,6 +38,7 @@ class TypehintHelper
 						return new ObjectType($classReflection->getParentClass()->getName());
 					}
 				}
+
 				return new NonexistentParentClassType();
 			default:
 				return new ObjectType($typeString);

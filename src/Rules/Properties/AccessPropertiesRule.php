@@ -41,6 +41,7 @@ class AccessPropertiesRule implements \PHPStan\Rules\Rule
 	/**
 	 * @param \PhpParser\Node\Expr\PropertyFetch $node
 	 * @param \PHPStan\Analyser\Scope $scope
+	 *
 	 * @return (string|\PHPStan\Rules\RuleError)[]
 	 */
 	public function processNode(\PhpParser\Node $node, Scope $scope): array

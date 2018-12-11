@@ -31,6 +31,7 @@ class ContainerFactory
 	 * @param string $tempDirectory
 	 * @param string[] $additionalConfigFiles
 	 * @param string[] $analysedPaths
+	 *
 	 * @return \Nette\DI\Container
 	 */
 	public function create(
@@ -41,25 +42,29 @@ class ContainerFactory
 	{
 		$configurator = new Configurator(new LoaderFactory());
 		$configurator->defaultExtensions = [
-			'php' => PhpExtension::class,
+			'php'        => PhpExtension::class,
 			'extensions' => \Nette\DI\Extensions\ExtensionsExtension::class,
 		];
 		$configurator->setDebugMode(true);
 		$configurator->setTempDirectory($tempDirectory);
-		$configurator->addParameters([
-			'rootDir' => $this->rootDirectory,
-			'currentWorkingDirectory' => $this->currentWorkingDirectory,
-			'cliArgumentsVariablesRegistered' => ini_get('register_argc_argv') === '1',
-			'tmpDir' => $tempDirectory,
-		]);
+		$configurator->addParameters(
+			[
+				'rootDir'                         => $this->rootDirectory,
+				'currentWorkingDirectory'         => $this->currentWorkingDirectory,
+				'cliArgumentsVariablesRegistered' => ini_get('register_argc_argv') === '1',
+				'tmpDir'                          => $tempDirectory,
+			]
+		);
 		$configurator->addConfig($this->configDirectory . '/config.neon');
 		foreach ($additionalConfigFiles as $additionalConfigFile) {
 			$configurator->addConfig($additionalConfigFile);
 		}
 
-		$configurator->addServices([
-			'relativePathHelper' => new RelativePathHelper($this->currentWorkingDirectory, DIRECTORY_SEPARATOR, $analysedPaths),
-		]);
+		$configurator->addServices(
+			[
+				'relativePathHelper' => new RelativePathHelper($this->currentWorkingDirectory, DIRECTORY_SEPARATOR, $analysedPaths),
+			]
+		);
 
 		$container = $configurator->createContainer();
 

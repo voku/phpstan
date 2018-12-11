@@ -50,7 +50,7 @@ class PhpFunctionReflection implements FunctionReflection, ReflectionWithFilenam
 	/** @var bool */
 	private $isFinal;
 
-	/** @var string|false */
+	/** @var false|string */
 	private $filename;
 
 	/** @var FunctionVariantWithPhpDocs[]|null */
@@ -67,7 +67,7 @@ class PhpFunctionReflection implements FunctionReflection, ReflectionWithFilenam
 	 * @param bool $isDeprecated
 	 * @param bool $isInternal
 	 * @param bool $isFinal
-	 * @param string|false $filename
+	 * @param false|string $filename
 	 */
 	public function __construct(
 		\ReflectionFunction $reflection,
@@ -102,7 +102,7 @@ class PhpFunctionReflection implements FunctionReflection, ReflectionWithFilenam
 	}
 
 	/**
-	 * @return string|false
+	 * @return false|string
 	 */
 	public function getFileName()
 	{
@@ -134,12 +134,15 @@ class PhpFunctionReflection implements FunctionReflection, ReflectionWithFilenam
 	 */
 	private function getParameters(): array
 	{
-		return array_map(function (\ReflectionParameter $reflection) {
-			return new PhpParameterReflection(
-				$reflection,
-				$this->phpDocParameterTypes[$reflection->getName()] ?? null
-			);
-		}, $this->reflection->getParameters());
+		return array_map(
+			function (\ReflectionParameter $reflection) {
+				return new PhpParameterReflection(
+					$reflection,
+					$this->phpDocParameterTypes[$reflection->getName()] ?? null
+				);
+			},
+			$this->reflection->getParameters()
+		);
 	}
 
 	private function isVariadic(): bool
@@ -152,6 +155,7 @@ class PhpFunctionReflection implements FunctionReflection, ReflectionWithFilenam
 				$nodes = $this->parser->parseFile($this->reflection->getFileName());
 				$result = $this->callsFuncGetArgs($nodes);
 				$this->cache->save($key, $result);
+
 				return $result;
 			}
 
@@ -163,6 +167,7 @@ class PhpFunctionReflection implements FunctionReflection, ReflectionWithFilenam
 
 	/**
 	 * @param mixed $nodes
+	 *
 	 * @return bool
 	 */
 	private function callsFuncGetArgs($nodes): bool
@@ -210,6 +215,7 @@ class PhpFunctionReflection implements FunctionReflection, ReflectionWithFilenam
 		) {
 			$phpDocReturnType = null;
 		}
+
 		return TypehintHelper::decideTypeFromReflection(
 			$returnType,
 			$phpDocReturnType

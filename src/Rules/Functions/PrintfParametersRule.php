@@ -18,6 +18,7 @@ class PrintfParametersRule implements \PHPStan\Rules\Rule
 	/**
 	 * @param \PhpParser\Node\Expr\FuncCall $node
 	 * @param \PHPStan\Analyser\Scope $scope
+	 *
 	 * @return string[]
 	 */
 	public function processNode(Node $node, Scope $scope): array
@@ -27,16 +28,16 @@ class PrintfParametersRule implements \PHPStan\Rules\Rule
 		}
 
 		$functionsArgumentPositions = [
-			'printf' => 0,
+			'printf'  => 0,
 			'sprintf' => 0,
-			'sscanf' => 1,
-			'fscanf' => 1,
+			'sscanf'  => 1,
+			'fscanf'  => 1,
 		];
 		$minimumNumberOfArguments = [
-			'printf' => 1,
+			'printf'  => 1,
 			'sprintf' => 1,
-			'sscanf' => 3,
-			'fscanf' => 3,
+			'sscanf'  => 3,
+			'fscanf'  => 3,
 		];
 
 		$name = strtolower((string) $node->name);
@@ -96,9 +97,12 @@ class PrintfParametersRule implements \PHPStan\Rules\Rule
 			return 0;
 		}
 
-		$placeholders = array_filter($matches, static function (array $match): bool {
-			return strlen($match['before']) % 2 === 0;
-		});
+		$placeholders = array_filter(
+			$matches,
+			static function (array $match): bool {
+				return strlen($match['before']) % 2 === 0;
+			}
+		);
 
 		if (count($placeholders) === 0) {
 			return 0;

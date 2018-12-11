@@ -32,9 +32,12 @@ class BrokerFactory
 	public function create(): Broker
 	{
 		$tagToService = function (array $tags) {
-			return array_map(function (string $serviceName) {
-				return $this->container->getService($serviceName);
-			}, array_keys($tags));
+			return array_map(
+				function (string $serviceName) {
+					return $this->container->getService($serviceName);
+				},
+				array_keys($tags)
+			);
 		};
 
 		$phpClassReflectionExtension = $this->container->getByType(PhpClassReflectionExtension::class);

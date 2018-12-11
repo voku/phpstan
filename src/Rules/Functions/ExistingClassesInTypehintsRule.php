@@ -27,6 +27,7 @@ class ExistingClassesInTypehintsRule implements \PHPStan\Rules\Rule
 	/**
 	 * @param \PhpParser\Node\Stmt\Function_ $node
 	 * @param \PHPStan\Analyser\Scope $scope
+	 *
 	 * @return RuleError[]
 	 */
 	public function processNode(Node $node, Scope $scope): array

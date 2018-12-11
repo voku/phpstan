@@ -18,9 +18,12 @@ class AnalyserTest extends \PHPStan\Testing\TestCase
 	public function testReturnErrorIfIgnoredMessagesDoesNotOccur(): void
 	{
 		$result = $this->runAnalyser(['#Unknown error#'], true, __DIR__ . '/data/empty/empty.php', false);
-		$this->assertSame([
-			'Ignored error pattern #Unknown error# was not matched in reported errors.',
-		], $result);
+		$this->assertSame(
+			[
+				'Ignored error pattern #Unknown error# was not matched in reported errors.',
+			],
+			$result
+		);
 	}
 
 	public function testDoNotReturnErrorIfIgnoredMessagesDoesNotOccurWithReportUnmatchedIgnoredErrorsOff(): void
@@ -38,9 +41,12 @@ class AnalyserTest extends \PHPStan\Testing\TestCase
 	public function testReportInvalidIgnorePatternEarly(): void
 	{
 		$result = $this->runAnalyser(['#Regexp syntax error'], true, __DIR__ . '/data/parse-error.php', false);
-		$this->assertSame([
-			"No ending delimiter '#' found in pattern: #Regexp syntax error",
-		], $result);
+		$this->assertSame(
+			[
+				"No ending delimiter '#' found in pattern: #Regexp syntax error",
+			],
+			$result
+		);
 	}
 
 	public function testFileWithAnIgnoredError(): void
@@ -174,9 +180,11 @@ class AnalyserTest extends \PHPStan\Testing\TestCase
 		bool $reportUnmatchedIgnoredErrors = true
 	): \PHPStan\Analyser\Analyser
 	{
-		$registry = new Registry([
-			new AlwaysFailRule(),
-		]);
+		$registry = new Registry(
+			[
+				new AlwaysFailRule(),
+			]
+		);
 
 		$traverser = new \PhpParser\NodeTraverser();
 		$traverser->addVisitor(new \PhpParser\NodeVisitor\NameResolver());

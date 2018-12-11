@@ -31,6 +31,7 @@ class ImpossibleCheckTypeFunctionCallRule implements \PHPStan\Rules\Rule
 	/**
 	 * @param \PhpParser\Node\Expr\FuncCall $node
 	 * @param \PHPStan\Analyser\Scope $scope
+	 *
 	 * @return string[] errors
 	 */
 	public function processNode(Node $node, Scope $scope): array

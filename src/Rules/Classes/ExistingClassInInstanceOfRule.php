@@ -42,6 +42,7 @@ class ExistingClassInInstanceOfRule implements \PHPStan\Rules\Rule
 	/**
 	 * @param \PhpParser\Node\Expr\Instanceof_ $node
 	 * @param \PHPStan\Analyser\Scope $scope
+	 *
 	 * @return RuleError[]
 	 */
 	public function processNode(Node $node, Scope $scope): array
@@ -54,11 +55,15 @@ class ExistingClassInInstanceOfRule implements \PHPStan\Rules\Rule
 		$name = (string) $class;
 		$lowercaseName = strtolower($name);
 
-		if (in_array($lowercaseName, [
-			'self',
-			'static',
-			'parent',
-		], true)) {
+		if (in_array(
+			$lowercaseName,
+			[
+				'self',
+				'static',
+				'parent',
+			],
+			true
+		)) {
 			if (!$scope->isInClass()) {
 				return [
 					RuleErrorBuilder::message(sprintf('Using %s outside of class scope.', $lowercaseName))->line($class->getLine())->build(),

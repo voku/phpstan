@@ -19,6 +19,7 @@ class SignatureMapProvider
 	public function hasFunctionSignature(string $name): bool
 	{
 		$signatureMap = self::getSignatureMap();
+
 		return array_key_exists($name, $signatureMap);
 	}
 

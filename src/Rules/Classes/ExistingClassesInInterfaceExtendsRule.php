@@ -27,14 +27,18 @@ class ExistingClassesInInterfaceExtendsRule implements \PHPStan\Rules\Rule
 	/**
 	 * @param \PhpParser\Node\Stmt\Interface_ $node
 	 * @param \PHPStan\Analyser\Scope $scope
+	 *
 	 * @return RuleError[]
 	 */
 	public function processNode(Node $node, Scope $scope): array
 	{
 		return $this->classCaseSensitivityCheck->checkClassNames(
-			array_map(static function (Node\Name $interfaceName): ClassNameNodePair {
-				return new ClassNameNodePair((string) $interfaceName, $interfaceName);
-			}, $node->extends)
+			array_map(
+				static function (Node\Name $interfaceName): ClassNameNodePair {
+					return new ClassNameNodePair((string) $interfaceName, $interfaceName);
+				},
+				$node->extends
+			)
 		);
 	}
 

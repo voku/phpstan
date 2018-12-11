@@ -141,18 +141,22 @@ class TypeNodeResolver
 				return new ArrayType(new MixedType(true), new MixedType(true));
 
 			case 'scalar':
-				return new UnionType([
-					new IntegerType(),
-					new FloatType(),
-					new StringType(),
-					new BooleanType(),
-				]);
+				return new UnionType(
+					[
+						new IntegerType(),
+						new FloatType(),
+						new StringType(),
+						new BooleanType(),
+					]
+				);
 
 			case 'number':
-				return new UnionType([
-					new IntegerType(),
-					new FloatType(),
-				]);
+				return new UnionType(
+					[
+						new IntegerType(),
+						new FloatType(),
+					]
+				);
 
 			case 'iterable':
 				return new IterableType(new MixedType(true), new MixedType(true));
@@ -262,12 +266,14 @@ class TypeNodeResolver
 	private function resolveIntersectionTypeNode(IntersectionTypeNode $typeNode, NameScope $nameScope): Type
 	{
 		$types = $this->resolveMultiple($typeNode->types, $nameScope);
+
 		return TypeCombinator::intersect(...$types);
 	}
 
 	private function resolveArrayTypeNode(ArrayTypeNode $typeNode, NameScope $nameScope): Type
 	{
 		$itemType = $this->resolve($typeNode->type, $nameScope);
+
 		return new ArrayType(new MixedType(), $itemType);
 	}
 
@@ -324,6 +330,7 @@ class TypeNodeResolver
 		$parameters = array_map(
 			function (CallableTypeParameterNode $parameterNode) use ($nameScope, &$isVariadic): NativeParameterReflection {
 				$isVariadic = $isVariadic || $parameterNode->isVariadic;
+
 				return new NativeParameterReflection(
 					$parameterNode->parameterName,
 					$parameterNode->isOptional,
@@ -352,6 +359,7 @@ class TypeNodeResolver
 	/**
 	 * @param TypeNode[] $typeNodes
 	 * @param NameScope $nameScope
+	 *
 	 * @return Type[]
 	 */
 	public function resolveMultiple(array $typeNodes, NameScope $nameScope): array

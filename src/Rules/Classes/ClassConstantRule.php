@@ -47,6 +47,7 @@ class ClassConstantRule implements \PHPStan\Rules\Rule
 	/**
 	 * @param \PhpParser\Node\Expr\ClassConstFetch $node
 	 * @param \PHPStan\Analyser\Scope $scope
+	 *
 	 * @return (string|\PHPStan\Rules\RuleError)[]
 	 */
 	public function processNode(Node $node, Scope $scope): array
@@ -97,9 +98,8 @@ class ClassConstantRule implements \PHPStan\Rules\Rule
 					return [
 						sprintf('Access to constant %s on an unknown class %s.', $constantName, $className),
 					];
-				} else {
-					$messages = $this->classCaseSensitivityCheck->checkClassNames([new ClassNameNodePair($className, $class)]);
 				}
+					$messages = $this->classCaseSensitivityCheck->checkClassNames([new ClassNameNodePair($className, $class)]);
 
 				$className = $this->broker->getClass($className)->getName();
 			}
@@ -128,9 +128,12 @@ class ClassConstantRule implements \PHPStan\Rules\Rule
 		$classType = TypeCombinator::remove($classType, new StringType());
 
 		if (!$classType->canAccessConstants()->yes()) {
-			return array_merge($messages, [
-				sprintf('Cannot access constant %s on %s.', $constantName, $typeForDescribe->describe(VerbosityLevel::typeOnly())),
-			]);
+			return array_merge(
+				$messages,
+				[
+					sprintf('Cannot access constant %s on %s.', $constantName, $typeForDescribe->describe(VerbosityLevel::typeOnly())),
+				]
+			);
 		}
 
 		if (strtolower($constantName) === 'class') {
@@ -138,25 +141,31 @@ class ClassConstantRule implements \PHPStan\Rules\Rule
 		}
 
 		if (!$classType->hasConstant($constantName)->yes()) {
-			return array_merge($messages, [
-				sprintf(
-					'Access to undefined constant %s::%s.',
-					$typeForDescribe->describe(VerbosityLevel::typeOnly()),
-					$constantName
-				),
-			]);
+			return array_merge(
+				$messages,
+				[
+					sprintf(
+						'Access to undefined constant %s::%s.',
+						$typeForDescribe->describe(VerbosityLevel::typeOnly()),
+						$constantName
+					),
+				]
+			);
 		}
 
 		$constantReflection = $classType->getConstant($constantName);
 		if (!$scope->canAccessConstant($constantReflection)) {
-			return array_merge($messages, [
-				sprintf(
-					'Access to %s constant %s of class %s.',
-					$constantReflection->isPrivate() ? 'private' : 'protected',
-					$constantName,
-					$constantReflection->getDeclaringClass()->getDisplayName()
-				),
-			]);
+			return array_merge(
+				$messages,
+				[
+					sprintf(
+						'Access to %s constant %s of class %s.',
+						$constantReflection->isPrivate() ? 'private' : 'protected',
+						$constantName,
+						$constantReflection->getDeclaringClass()->getDisplayName()
+					),
+				]
+			);
 		}
 
 		return $messages;

@@ -49,7 +49,8 @@ class PhpDocNodeResolver
 	/**
 	 * @param PhpDocNode $phpDocNode
 	 * @param NameScope $nameScope
-	 * @return array<string|int, \PHPStan\PhpDoc\Tag\VarTag>
+	 *
+	 * @return array<int|string, \PHPStan\PhpDoc\Tag\VarTag>
 	 */
 	private function resolveVarTags(PhpDocNode $phpDocNode, NameScope $nameScope): array
 	{
@@ -73,6 +74,7 @@ class PhpDocNodeResolver
 	/**
 	 * @param PhpDocNode $phpDocNode
 	 * @param NameScope $nameScope
+	 *
 	 * @return array<string, \PHPStan\PhpDoc\Tag\PropertyTag>
 	 */
 	private function resolvePropertyTags(PhpDocNode $phpDocNode, NameScope $nameScope): array
@@ -124,6 +126,7 @@ class PhpDocNodeResolver
 	/**
 	 * @param PhpDocNode $phpDocNode
 	 * @param NameScope $nameScope
+	 *
 	 * @return array<string, \PHPStan\PhpDoc\Tag\MethodTag>
 	 */
 	private function resolveMethodTags(PhpDocNode $phpDocNode, NameScope $nameScope): array
@@ -161,6 +164,7 @@ class PhpDocNodeResolver
 	/**
 	 * @param PhpDocNode $phpDocNode
 	 * @param NameScope $nameScope
+	 *
 	 * @return array<string, \PHPStan\PhpDoc\Tag\ParamTag>
 	 */
 	private function resolveParamTags(PhpDocNode $phpDocNode, NameScope $nameScope): array
@@ -201,9 +205,12 @@ class PhpDocNodeResolver
 
 	private function resolveThrowsTags(PhpDocNode $phpDocNode, NameScope $nameScope): ?\PHPStan\PhpDoc\Tag\ThrowsTag
 	{
-		$types = array_map(function (ThrowsTagValueNode $throwsTagValue) use ($nameScope): Type {
-			return $this->typeNodeResolver->resolve($throwsTagValue->type, $nameScope);
-		}, $phpDocNode->getThrowsTagValues());
+		$types = array_map(
+			function (ThrowsTagValueNode $throwsTagValue) use ($nameScope): Type {
+				return $this->typeNodeResolver->resolve($throwsTagValue->type, $nameScope);
+			},
+			$phpDocNode->getThrowsTagValues()
+		);
 
 		if (count($types) === 0) {
 			return null;

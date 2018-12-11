@@ -72,7 +72,8 @@ class Analyser
 	 * @param \Closure(string $file): void|null $preFileCallback
 	 * @param \Closure(string $file): void|null $postFileCallback
 	 * @param bool $debug
-	 * @return string[]|\PHPStan\Analyser\Error[] errors
+	 *
+	 * @return \PHPStan\Analyser\Error[]|string[] errors
 	 */
 	public function analyse(
 		array $files,
@@ -92,6 +93,7 @@ class Analyser
 							'Ignored error %s is missing a message.',
 							Json::encode($ignoreError)
 						);
+
 						continue;
 					}
 					if (!isset($ignoreError['path'])) {
@@ -183,6 +185,7 @@ class Analyser
 				$errors[] = new Error($internalErrorMessage, $file);
 				if ($internalErrorsCount >= $this->internalErrorsCountLimit) {
 					$reachedInternalErrorsCountLimit = true;
+
 					break;
 				}
 			}
@@ -190,23 +193,30 @@ class Analyser
 
 		$unmatchedIgnoredErrors = $this->ignoreErrors;
 		$addErrors = [];
-		$errors = array_values(array_filter($errors, function (Error $error) use (&$unmatchedIgnoredErrors, &$addErrors): bool {
-			foreach ($this->ignoreErrors as $i => $ignore) {
-				if (IgnoredError::shouldIgnore($this->fileHelper, $error, $ignore)) {
-					unset($unmatchedIgnoredErrors[$i]);
-					if (!$error->canBeIgnored()) {
-						$addErrors[] = sprintf(
-							'Error message "%s" cannot be ignored, use excludes_analyse instead.',
-							$error->getMessage()
-						);
-						return true;
-					}
-					return false;
-				}
-			}
+		$errors = array_values(
+			array_filter(
+				$errors,
+				function (Error $error) use (&$unmatchedIgnoredErrors, &$addErrors): bool {
+					foreach ($this->ignoreErrors as $i => $ignore) {
+						if (IgnoredError::shouldIgnore($this->fileHelper, $error, $ignore)) {
+							unset($unmatchedIgnoredErrors[$i]);
+							if (!$error->canBeIgnored()) {
+								$addErrors[] = sprintf(
+									'Error message "%s" cannot be ignored, use excludes_analyse instead.',
+									$error->getMessage()
+								);
 
-			return true;
-		}));
+								return true;
+							}
+
+							return false;
+						}
+					}
+
+					return true;
+				}
+			)
+		);
 
 		$errors = array_merge($errors, $addErrors);
 

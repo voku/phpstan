@@ -86,6 +86,7 @@ class AnalysisResult
 
 	/**
 	 * @deprecated Use \PHPStan\File\RelativePathHelper instead
+	 *
 	 * @return string
 	 */
 	public function getCurrentDirectory(): string

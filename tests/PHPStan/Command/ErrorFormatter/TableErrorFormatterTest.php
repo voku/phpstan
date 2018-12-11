@@ -145,10 +145,14 @@ class TableErrorFormatterTest extends TestBaseFormatter
 		$this->skipIfNotOnUnix();
 		$formatter = new TableErrorFormatter(new RelativePathHelper(self::DIRECTORY_PATH, '/', []));
 
-		$this->assertSame($exitCode, $formatter->formatErrors(
-			$this->getAnalysisResult($numFileErrors, $numGenericErrors),
-			$this->getErrorConsoleStyle()
-		), sprintf('%s: response code do not match', $message));
+		$this->assertSame(
+			$exitCode,
+			$formatter->formatErrors(
+				$this->getAnalysisResult($numFileErrors, $numGenericErrors),
+				$this->getErrorConsoleStyle()
+			),
+			sprintf('%s: response code do not match', $message)
+		);
 
 		$this->assertEquals($expected, $this->getOutputContent(), sprintf('%s: output do not match', $message));
 	}

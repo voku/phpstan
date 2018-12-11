@@ -18,6 +18,7 @@ class ClassCaseSensitivityCheck
 
 	/**
 	 * @param ClassNameNodePair[] $pairs
+	 *
 	 * @return RuleError[]
 	 */
 	public function checkClassNames(array $pairs): array
@@ -37,12 +38,14 @@ class ClassCaseSensitivityCheck
 				continue;
 			}
 
-			$errors[] = RuleErrorBuilder::message(sprintf(
-				'%s %s referenced with incorrect case: %s.',
-				$this->getTypeName($classReflection),
-				$realClassName,
-				$className
-			))->line($pair->getNode()->getLine())->build();
+			$errors[] = RuleErrorBuilder::message(
+				sprintf(
+					'%s %s referenced with incorrect case: %s.',
+					$this->getTypeName($classReflection),
+					$realClassName,
+					$className
+				)
+			)->line($pair->getNode()->getLine())->build();
 		}
 
 		return $errors;

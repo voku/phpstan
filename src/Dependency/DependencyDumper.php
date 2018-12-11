@@ -53,6 +53,7 @@ class DependencyDumper
 	 * @param callable(int $count): void $countCallback
 	 * @param callable(): void $progressCallback
 	 * @param string[]|null $analysedPaths
+	 *
 	 * @return string[][]
 	 */
 	public function dumpDependencies(
@@ -99,6 +100,7 @@ class DependencyDumper
 	 * @param \PhpParser\Node $node
 	 * @param Scope $scope
 	 * @param array<string, true> $analysedFiles
+	 *
 	 * @return string[]
 	 */
 	private function resolveDependencies(

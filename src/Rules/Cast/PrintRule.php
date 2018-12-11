@@ -29,6 +29,7 @@ class PrintRule implements Rule
 	/**
 	 * @param \PhpParser\Node\Expr\Print_ $node
 	 * @param Scope $scope
+	 *
 	 * @return string[]
 	 */
 	public function processNode(Node $node, Scope $scope): array

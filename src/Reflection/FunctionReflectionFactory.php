@@ -16,7 +16,8 @@ interface FunctionReflectionFactory
 	 * @param bool $isDeprecated
 	 * @param bool $isInternal
 	 * @param bool $isFinal
-	 * @param string|false $filename
+	 * @param false|string $filename
+	 *
 	 * @return PhpFunctionReflection
 	 */
 	public function create(

@@ -15,6 +15,7 @@ class ConditionalTagsExtension extends \Nette\DI\CompilerExtension
 				foreach ($tags as $tag => $parameter) {
 					if ((bool) $parameter) {
 						$service->addTag($tag);
+
 						continue;
 					}
 				}

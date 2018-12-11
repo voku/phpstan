@@ -29,6 +29,7 @@ class EchoRule implements Rule
 	/**
 	 * @param \PhpParser\Node\Stmt\Echo_ $node
 	 * @param Scope $scope
+	 *
 	 * @return string[]
 	 */
 	public function processNode(Node $node, Scope $scope): array
@@ -57,6 +58,7 @@ class EchoRule implements Rule
 				$typeResult->getType()->describe(VerbosityLevel::value())
 			);
 		}
+
 		return $messages;
 	}
 

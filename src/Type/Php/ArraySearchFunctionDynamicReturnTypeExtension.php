@@ -70,6 +70,7 @@ final class ArraySearchFunctionDynamicReturnTypeExtension implements DynamicFunc
 		foreach ($haystackArrays as $haystackArray) {
 			if (!$haystackArray instanceof ConstantArrayType) {
 				$arrays[] = $haystackArray;
+
 				continue;
 			}
 
@@ -104,6 +105,7 @@ final class ArraySearchFunctionDynamicReturnTypeExtension implements DynamicFunc
 			$isNeedleSuperType = $valueType->isSuperTypeOf($needle);
 			if ($isNeedleSuperType->no()) {
 				$matchesByType[] = new ConstantBooleanType(false);
+
 				continue;
 			}
 
@@ -137,6 +139,7 @@ final class ArraySearchFunctionDynamicReturnTypeExtension implements DynamicFunc
 
 	/**
 	 * @param Type $type
+	 *
 	 * @return Type[]
 	 */
 	private function pickArrays(Type $type): array

@@ -51,10 +51,12 @@ class PropertyExistsTypeSpecifyingExtension implements FunctionTypeSpecifyingExt
 
 		return $this->typeSpecifier->create(
 			$node->args[0]->value,
-			new IntersectionType([
-				new ObjectWithoutClassType(),
-				new HasPropertyType($propertyNameType->getValue()),
-			]),
+			new IntersectionType(
+				[
+					new ObjectWithoutClassType(),
+					new HasPropertyType($propertyNameType->getValue()),
+				]
+			),
 			$context
 		);
 	}

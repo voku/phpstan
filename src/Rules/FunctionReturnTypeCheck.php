@@ -27,6 +27,7 @@ class FunctionReturnTypeCheck
 	 * @param string $voidMessage
 	 * @param string $typeMismatchMessage
 	 * @param bool $isGenerator
+	 *
 	 * @return string[]
 	 */
 	public function checkReturnType(

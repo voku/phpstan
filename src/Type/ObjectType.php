@@ -22,7 +22,7 @@ class ObjectType implements TypeWithClassName
 
 	private const EXTRA_OFFSET_CLASSES = [
 		'SimpleXMLElement' => true,
-		'DOMNodeList' => true,
+		'DOMNodeList'      => true,
 	];
 
 	/** @var string */
@@ -53,6 +53,7 @@ class ObjectType implements TypeWithClassName
 	public function getProperty(string $propertyName, ClassMemberAccessAnswerer $scope): PropertyReflection
 	{
 		$broker = Broker::getInstance();
+
 		return $broker->getClass($this->className)->getProperty($propertyName, $scope);
 	}
 
@@ -82,12 +83,14 @@ class ObjectType implements TypeWithClassName
 			$this->isInstanceOf('SimpleXMLElement')->yes()
 			&& $type->isSuperTypeOf($this)->no()
 		) {
-			return (new UnionType([
-				new IntegerType(),
-				new FloatType(),
-				new StringType(),
-				new BooleanType(),
-			]))->accepts($type, $strictTypes);
+			return (new UnionType(
+				[
+					new IntegerType(),
+					new FloatType(),
+					new StringType(),
+					new BooleanType(),
+				]
+			))->accepts($type, $strictTypes);
 		}
 
 		if (!$type instanceof TypeWithClassName) {
@@ -210,10 +213,12 @@ class ObjectType implements TypeWithClassName
 	public function toNumber(): Type
 	{
 		if ($this->isInstanceOf('SimpleXMLElement')->yes()) {
-			return new UnionType([
-				new FloatType(),
-				new IntegerType(),
-			]);
+			return new UnionType(
+				[
+					new FloatType(),
+					new IntegerType(),
+				]
+			);
 		}
 
 		return new ErrorType();
@@ -233,6 +238,7 @@ class ObjectType implements TypeWithClassName
 		if ($this->isInstanceOf('SimpleXMLElement')->yes()) {
 			return new FloatType();
 		}
+
 		return new ErrorType();
 	}
 
@@ -341,6 +347,7 @@ class ObjectType implements TypeWithClassName
 	public function getMethod(string $methodName, ClassMemberAccessAnswerer $scope): MethodReflection
 	{
 		$broker = Broker::getInstance();
+
 		return $broker->getClass($this->className)->getMethod($methodName, $scope);
 	}
 
@@ -364,6 +371,7 @@ class ObjectType implements TypeWithClassName
 	public function getConstant(string $constantName): ConstantReflection
 	{
 		$broker = Broker::getInstance();
+
 		return $broker->getClass($this->className)->getConstant($constantName);
 	}
 
@@ -393,11 +401,14 @@ class ObjectType implements TypeWithClassName
 		}
 
 		if ($this->isInstanceOf(\IteratorAggregate::class)->yes()) {
-			return RecursionGuard::run($this, static function () use ($classReflection) {
-				return ParametersAcceptorSelector::selectSingle(
-					$classReflection->getNativeMethod('getIterator')->getVariants()
-				)->getReturnType()->getIterableKeyType();
-			});
+			return RecursionGuard::run(
+				$this,
+				static function () use ($classReflection) {
+					return ParametersAcceptorSelector::selectSingle(
+						$classReflection->getNativeMethod('getIterator')->getVariants()
+					)->getReturnType()->getIterableKeyType();
+				}
+			);
 		}
 
 		if ($this->isInstanceOf(\Traversable::class)->yes()) {
@@ -424,11 +435,14 @@ class ObjectType implements TypeWithClassName
 		}
 
 		if ($this->isInstanceOf(\IteratorAggregate::class)->yes()) {
-			return RecursionGuard::run($this, static function () use ($classReflection) {
-				return ParametersAcceptorSelector::selectSingle(
-					$classReflection->getNativeMethod('getIterator')->getVariants()
-				)->getReturnType()->getIterableValueType();
-			});
+			return RecursionGuard::run(
+				$this,
+				static function () use ($classReflection) {
+					return ParametersAcceptorSelector::selectSingle(
+						$classReflection->getNativeMethod('getIterator')->getVariants()
+					)->getReturnType()->getIterableValueType();
+				}
+			);
 		}
 
 		if ($this->isInstanceOf(\Traversable::class)->yes()) {
@@ -486,9 +500,13 @@ class ObjectType implements TypeWithClassName
 
 		if ($this->isInstanceOf(\ArrayAccess::class)->yes()) {
 			$classReflection = $broker->getClass($this->className);
-			return RecursionGuard::run($this, static function () use ($classReflection) {
-				return ParametersAcceptorSelector::selectSingle($classReflection->getNativeMethod('offsetGet')->getVariants())->getReturnType();
-			});
+
+			return RecursionGuard::run(
+				$this,
+				static function () use ($classReflection) {
+					return ParametersAcceptorSelector::selectSingle($classReflection->getNativeMethod('offsetGet')->getVariants())->getReturnType();
+				}
+			);
 		}
 
 		return new ErrorType();
@@ -523,6 +541,7 @@ class ObjectType implements TypeWithClassName
 
 	/**
 	 * @param \PHPStan\Reflection\ClassMemberAccessAnswerer $scope
+	 *
 	 * @return \PHPStan\Reflection\ParametersAcceptor[]
 	 */
 	public function getCallableParametersAcceptors(ClassMemberAccessAnswerer $scope): array
@@ -568,6 +587,7 @@ class ObjectType implements TypeWithClassName
 
 	/**
 	 * @param mixed[] $properties
+	 *
 	 * @return Type
 	 */
 	public static function __set_state(array $properties): Type

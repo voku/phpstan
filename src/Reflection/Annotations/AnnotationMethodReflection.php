@@ -17,7 +17,7 @@ class AnnotationMethodReflection implements MethodReflection
 	/** @var \PHPStan\Reflection\ClassReflection */
 	private $declaringClass;
 
-	/** @var  Type */
+	/** @var Type */
 	private $returnType;
 
 	/** @var bool */
@@ -101,6 +101,7 @@ class AnnotationMethodReflection implements MethodReflection
 				),
 			];
 		}
+
 		return $this->variants;
 	}
 

@@ -29,6 +29,7 @@ class UnreachableIfBranchesRule implements \PHPStan\Rules\Rule
 	/**
 	 * @param \PhpParser\Node\Stmt\If_ $node
 	 * @param Scope $scope
+	 *
 	 * @return RuleError[]
 	 */
 	public function processNode(Node $node, Scope $scope): array
@@ -40,6 +41,7 @@ class UnreachableIfBranchesRule implements \PHPStan\Rules\Rule
 		foreach ($node->elseifs as $elseif) {
 			if ($nextBranchIsDead) {
 				$errors[] = RuleErrorBuilder::message('Elseif branch is unreachable because previous condition is always true.')->line($elseif->getLine())->build();
+
 				continue;
 			}
 

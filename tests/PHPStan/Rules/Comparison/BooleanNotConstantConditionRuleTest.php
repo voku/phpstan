@@ -19,24 +19,27 @@ class BooleanNotConstantConditionRuleTest extends \PHPStan\Testing\RuleTestCase
 
 	public function testRule(): void
 	{
-		$this->analyse([__DIR__ . '/data/boolean-not.php'], [
+		$this->analyse(
+			[__DIR__ . '/data/boolean-not.php'],
 			[
-				'Negated boolean expression is always false.',
-				13,
-			],
-			[
-				'Negated boolean expression is always true.',
-				18,
-			],
-			[
-				'Negated boolean expression is always false.',
-				33,
-			],
-			[
-				'Negated boolean expression is always false.',
-				40,
-			],
-		]);
+				[
+					'Negated boolean expression is always false.',
+					13,
+				],
+				[
+					'Negated boolean expression is always true.',
+					18,
+				],
+				[
+					'Negated boolean expression is always false.',
+					33,
+				],
+				[
+					'Negated boolean expression is always false.',
+					40,
+				],
+			]
+		);
 	}
 
 }

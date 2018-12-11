@@ -28,10 +28,12 @@ class CurlInitReturnTypeExtension implements \PHPStan\Type\DynamicFunctionReturn
 			return new ResourceType();
 		}
 
-		return new UnionType([
-			new ResourceType(),
-			new ConstantBooleanType(false),
-		]);
+		return new UnionType(
+			[
+				new ResourceType(),
+				new ConstantBooleanType(false),
+			]
+		);
 	}
 
 }

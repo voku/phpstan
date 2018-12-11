@@ -163,6 +163,7 @@ class Broker
 		if (self::$instance === null) {
 			throw new \PHPStan\ShouldNotHappenException();
 		}
+
 		return self::$instance;
 	}
 
@@ -176,6 +177,7 @@ class Broker
 
 	/**
 	 * @param string $className
+	 *
 	 * @return \PHPStan\Type\DynamicMethodReturnTypeExtension[]
 	 */
 	public function getDynamicMethodReturnTypeExtensionsForClass(string $className): array
@@ -188,11 +190,13 @@ class Broker
 
 			$this->dynamicMethodReturnTypeExtensionsByClass = $byClass;
 		}
+
 		return $this->getDynamicExtensionsForType($this->dynamicMethodReturnTypeExtensionsByClass, $className);
 	}
 
 	/**
 	 * @param string $className
+	 *
 	 * @return \PHPStan\Type\DynamicStaticMethodReturnTypeExtension[]
 	 */
 	public function getDynamicStaticMethodReturnTypeExtensionsForClass(string $className): array
@@ -205,6 +209,7 @@ class Broker
 
 			$this->dynamicStaticMethodReturnTypeExtensionsByClass = $byClass;
 		}
+
 		return $this->getDynamicExtensionsForType($this->dynamicStaticMethodReturnTypeExtensionsByClass, $className);
 	}
 
@@ -219,6 +224,7 @@ class Broker
 	/**
 	 * @param \PHPStan\Type\DynamicMethodReturnTypeExtension[][]|\PHPStan\Type\DynamicStaticMethodReturnTypeExtension[][] $extensions
 	 * @param string $className
+	 *
 	 * @return mixed[]
 	 */
 	private function getDynamicExtensionsForType(array $extensions, string $className): array
@@ -337,11 +343,13 @@ class Broker
 			return $this->hasClassCache[$className];
 		}
 
-		spl_autoload_register($autoloader = function (string $autoloadedClassName) use ($className): void {
-			if ($autoloadedClassName !== $className && !$this->isExistsCheckCall()) {
-				throw new \PHPStan\Broker\ClassAutoloadingException($autoloadedClassName);
+		spl_autoload_register(
+			$autoloader = function (string $autoloadedClassName) use ($className): void {
+				if ($autoloadedClassName !== $className && !$this->isExistsCheckCall()) {
+					throw new \PHPStan\Broker\ClassAutoloadingException($autoloadedClassName);
+				}
 			}
-		});
+		);
 
 		try {
 			return $this->hasClassCache[$className] = class_exists($className) || interface_exists($className) || trait_exists($className);
@@ -381,31 +389,37 @@ class Broker
 						$returnType = TypeUtils::toBenevolentUnion($returnType);
 					}
 					$variants[] = new FunctionVariant(
-						array_map(static function (ParameterSignature $parameterSignature) use ($lowerCasedFunctionName): NativeParameterReflection {
-							$type = $parameterSignature->getType();
-							if (
+						array_map(
+							static function (ParameterSignature $parameterSignature) use ($lowerCasedFunctionName): NativeParameterReflection {
+								$type = $parameterSignature->getType();
+								if (
 								$parameterSignature->getName() === 'args'
 								&& (
 									$lowerCasedFunctionName === 'printf'
 									|| $lowerCasedFunctionName === 'sprintf'
 								)
-							) {
-								$type = new UnionType([
-									new StringAlwaysAcceptingObjectWithToStringType(),
-									new IntegerType(),
-									new FloatType(),
-									new NullType(),
-									new BooleanType(),
-								]);
-							}
-							return new NativeParameterReflection(
-								$parameterSignature->getName(),
-								$parameterSignature->isOptional(),
-								$type,
-								$parameterSignature->passedByReference(),
-								$parameterSignature->isVariadic()
-							);
-						}, $functionSignature->getParameters()),
+								) {
+									$type = new UnionType(
+										[
+											new StringAlwaysAcceptingObjectWithToStringType(),
+											new IntegerType(),
+											new FloatType(),
+											new NullType(),
+											new BooleanType(),
+										]
+									);
+								}
+
+								return new NativeParameterReflection(
+									$parameterSignature->getName(),
+									$parameterSignature->isOptional(),
+									$type,
+									$parameterSignature->passedByReference(),
+									$parameterSignature->isVariadic()
+								);
+							},
+							$functionSignature->getParameters()
+						),
 						$functionSignature->isVariadic(),
 						$returnType
 					);
@@ -482,9 +496,12 @@ class Broker
 
 		$functionReflection = $this->functionReflectionFactory->create(
 			$reflectionFunction,
-			array_map(static function (ParamTag $paramTag): Type {
-				return $paramTag->getType();
-			}, $phpDocParameterTags),
+			array_map(
+				static function (ParamTag $paramTag): Type {
+					return $paramTag->getType();
+				},
+				$phpDocParameterTags
+			),
 			$phpDocReturnTag !== null ? $phpDocReturnTag->getType() : null,
 			$phpDocThrowsTag !== null ? $phpDocThrowsTag->getType() : null,
 			$isDeprecated,
@@ -499,16 +516,20 @@ class Broker
 
 	public function resolveFunctionName(\PhpParser\Node\Name $nameNode, ?Scope $scope): ?string
 	{
-		return $this->resolveName($nameNode, function (string $name): bool {
-			$exists = function_exists($name);
-			if ($exists) {
-				return true;
-			}
+		return $this->resolveName(
+			$nameNode,
+			function (string $name): bool {
+				$exists = function_exists($name);
+				if ($exists) {
+					return true;
+				}
 
-			$lowercased = strtolower($name);
+				$lowercased = strtolower($name);
 
-			return $this->signatureMapProvider->hasFunctionSignature($lowercased);
-		}, $scope);
+				return $this->signatureMapProvider->hasFunctionSignature($lowercased);
+			},
+			$scope
+		);
 	}
 
 	public function hasConstant(\PhpParser\Node\Name $nameNode, ?Scope $scope): bool
@@ -518,13 +539,18 @@ class Broker
 
 	public function resolveConstantName(\PhpParser\Node\Name $nameNode, ?Scope $scope): ?string
 	{
-		return $this->resolveName($nameNode, function (string $name) use ($scope): bool {
-			$isCompilerHaltOffset = $name === '__COMPILER_HALT_OFFSET__';
-			if ($isCompilerHaltOffset && $scope !== null && $this->fileHasCompilerHaltStatementCalls($scope->getFile())) {
-				return true;
-			}
-			return defined($name);
-		}, $scope);
+		return $this->resolveName(
+			$nameNode,
+			function (string $name) use ($scope): bool {
+				$isCompilerHaltOffset = $name === '__COMPILER_HALT_OFFSET__';
+				if ($isCompilerHaltOffset && $scope !== null && $this->fileHasCompilerHaltStatementCalls($scope->getFile())) {
+					return true;
+				}
+
+				return defined($name);
+			},
+			$scope
+		);
 	}
 
 	private function fileHasCompilerHaltStatementCalls(string $pathToFile): bool
@@ -543,6 +569,7 @@ class Broker
 	 * @param Node\Name $nameNode
 	 * @param \Closure(string $name): bool $existsCallback
 	 * @param Scope|null $scope
+	 *
 	 * @return string|null
 	 */
 	private function resolveName(
@@ -570,15 +597,15 @@ class Broker
 	{
 		$debugBacktrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
 		$existsCallTypes = [
-			'class_exists' => true,
+			'class_exists'     => true,
 			'interface_exists' => true,
-			'trait_exists' => true,
+			'trait_exists'     => true,
 		];
 
 		foreach ($debugBacktrace as $traceStep) {
 			if (
-				isset($traceStep['function'])
-				&& isset($existsCallTypes[$traceStep['function']])
+				isset($traceStep['function'], $existsCallTypes[$traceStep['function']])
+
 				// We must ignore the self::hasClass calls
 				&& (!isset($traceStep['file']) || $traceStep['file'] !== __FILE__)
 			) {

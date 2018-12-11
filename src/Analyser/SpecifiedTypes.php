@@ -69,7 +69,6 @@ class SpecifiedTypes
 		return new self($sureTypeUnion, $sureNotTypeUnion);
 	}
 
-
 	public function unionWith(SpecifiedTypes $other): self
 	{
 		$sureTypeUnion = $this->sureTypes + $other->sureTypes;

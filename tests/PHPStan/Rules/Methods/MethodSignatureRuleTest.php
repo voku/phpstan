@@ -151,12 +151,15 @@ class MethodSignatureRuleTest extends \PHPStan\Testing\RuleTestCase
 	{
 		$this->reportMaybes = true;
 		$this->reportStatic = true;
-		$this->analyse([__DIR__ . '/data/method-signature-static.php'], [
+		$this->analyse(
+			[__DIR__ . '/data/method-signature-static.php'],
 			[
-				'Parameter #1 $value (string) of method MethodSignature\Bar::doFoo() should be compatible with parameter $value (int) of method MethodSignature\Foo::doFoo()',
-				24,
-			],
-		]);
+				[
+					'Parameter #1 $value (string) of method MethodSignature\Bar::doFoo() should be compatible with parameter $value (int) of method MethodSignature\Foo::doFoo()',
+					24,
+				],
+			]
+		);
 	}
 
 }

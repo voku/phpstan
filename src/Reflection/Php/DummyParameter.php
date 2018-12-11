@@ -12,7 +12,7 @@ class DummyParameter implements ParameterReflection
 	/** @var string */
 	private $name;
 
-	/** @var \PHPStan\Type\Type  */
+	/** @var \PHPStan\Type\Type */
 	private $type;
 
 	/** @var bool */

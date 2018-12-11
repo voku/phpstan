@@ -42,6 +42,7 @@ class ReadingWriteOnlyPropertiesRule implements \PHPStan\Rules\Rule
 	/**
 	 * @param \PhpParser\Node\Expr $node
 	 * @param Scope $scope
+	 *
 	 * @return string[]
 	 */
 	public function processNode(Node $node, Scope $scope): array

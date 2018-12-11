@@ -42,20 +42,26 @@ class ErrorsConsoleStyle extends \Symfony\Component\Console\Style\SymfonyStyle
 		}
 
 		$wrap = static function ($rows) use ($terminalWidth, $maxHeaderWidth) {
-			return array_map(static function ($row) use ($terminalWidth, $maxHeaderWidth) {
-				return array_map(static function ($s) use ($terminalWidth, $maxHeaderWidth) {
-					if ($terminalWidth > $maxHeaderWidth + 5) {
-						return wordwrap(
-							$s,
-							$terminalWidth - $maxHeaderWidth - 5,
-							"\n",
-							true
-						);
-					}
+			return array_map(
+				static function ($row) use ($terminalWidth, $maxHeaderWidth) {
+					return array_map(
+						static function ($s) use ($terminalWidth, $maxHeaderWidth) {
+							if ($terminalWidth > $maxHeaderWidth + 5) {
+								return wordwrap(
+									$s,
+									$terminalWidth - $maxHeaderWidth - 5,
+									"\n",
+									true
+								);
+							}
 
-					return $s;
-				}, $row);
-			}, $rows);
+							return $s;
+						},
+						$row
+					);
+				},
+				$rows
+			);
 		};
 
 		parent::table($headers, $wrap($rows));
@@ -63,17 +69,20 @@ class ErrorsConsoleStyle extends \Symfony\Component\Console\Style\SymfonyStyle
 
 	/**
 	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
+	 *
 	 * @param int $max
 	 */
 	public function createProgressBar($max = 0): ProgressBar
 	{
 		$this->progressBar = parent::createProgressBar($max);
 		$this->progressBar->setOverwrite(true);
+
 		return $this->progressBar;
 	}
 
 	/**
 	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
+	 *
 	 * @param int $max
 	 */
 	public function progressStart($max = 0): void
@@ -86,6 +95,7 @@ class ErrorsConsoleStyle extends \Symfony\Component\Console\Style\SymfonyStyle
 
 	/**
 	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
+	 *
 	 * @param int $step
 	 */
 	public function progressAdvance($step = 1): void

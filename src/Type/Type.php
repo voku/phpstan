@@ -62,6 +62,7 @@ interface Type
 
 	/**
 	 * @param \PHPStan\Reflection\ClassMemberAccessAnswerer $scope
+	 *
 	 * @return \PHPStan\Reflection\ParametersAcceptor[]
 	 */
 	public function getCallableParametersAcceptors(ClassMemberAccessAnswerer $scope): array;
@@ -82,6 +83,7 @@ interface Type
 
 	/**
 	 * @param mixed[] $properties
+	 *
 	 * @return self
 	 */
 	public static function __set_state(array $properties): self;

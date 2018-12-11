@@ -19,6 +19,7 @@ class RegularExpressionPatternRule implements \PHPStan\Rules\Rule
 	/**
 	 * @param FuncCall $node
 	 * @param Scope $scope
+	 *
 	 * @return string[]
 	 */
 	public function processNode(Node $node, Scope $scope): array
@@ -41,6 +42,7 @@ class RegularExpressionPatternRule implements \PHPStan\Rules\Rule
 	/**
 	 * @param FuncCall $functionCall
 	 * @param Scope $scope
+	 *
 	 * @return string[]
 	 */
 	private function extractPatterns(FuncCall $functionCall, Scope $scope): array
@@ -63,15 +65,19 @@ class RegularExpressionPatternRule implements \PHPStan\Rules\Rule
 
 		foreach (TypeUtils::getConstantStrings($patternType) as $constantStringType) {
 			if (
-				!in_array($functionName, [
-					'preg_match',
-					'preg_match_all',
-					'preg_split',
-					'preg_grep',
-					'preg_replace',
-					'preg_replace_callback',
-					'preg_filter',
-				], true)
+				!in_array(
+					$functionName,
+					[
+						'preg_match',
+						'preg_match_all',
+						'preg_split',
+						'preg_grep',
+						'preg_replace',
+						'preg_replace_callback',
+						'preg_filter',
+					],
+					true
+				)
 			) {
 				continue;
 			}
@@ -81,11 +87,15 @@ class RegularExpressionPatternRule implements \PHPStan\Rules\Rule
 
 		foreach (TypeUtils::getConstantArrays($patternType) as $constantArrayType) {
 			if (
-				in_array($functionName, [
-					'preg_replace',
-					'preg_replace_callback',
-					'preg_filter',
-				], true)
+				in_array(
+					$functionName,
+					[
+						'preg_replace',
+						'preg_replace_callback',
+						'preg_filter',
+					],
+					true
+				)
 			) {
 				foreach ($constantArrayType->getValueTypes() as $arrayKeyType) {
 					if (!$arrayKeyType instanceof ConstantStringType) {

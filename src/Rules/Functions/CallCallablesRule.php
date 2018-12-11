@@ -43,6 +43,7 @@ class CallCallablesRule implements \PHPStan\Rules\Rule
 	/**
 	 * @param \PhpParser\Node\Expr\FuncCall $node
 	 * @param \PHPStan\Analyser\Scope $scope
+	 *
 	 * @return (string|\PHPStan\Rules\RuleError)[]
 	 */
 	public function processNode(

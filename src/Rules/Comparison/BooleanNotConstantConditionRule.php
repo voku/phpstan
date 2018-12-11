@@ -27,6 +27,7 @@ class BooleanNotConstantConditionRule implements \PHPStan\Rules\Rule
 	/**
 	 * @param \PhpParser\Node\Expr\BooleanNot $node
 	 * @param \PHPStan\Analyser\Scope $scope
+	 *
 	 * @return RuleError[]
 	 */
 	public function processNode(
@@ -37,10 +38,12 @@ class BooleanNotConstantConditionRule implements \PHPStan\Rules\Rule
 		$exprType = $this->helper->getBooleanType($scope, $node->expr);
 		if ($exprType instanceof ConstantBooleanType) {
 			return [
-				RuleErrorBuilder::message(sprintf(
-					'Negated boolean expression is always %s.',
-					$exprType->getValue() ? 'false' : 'true'
-				))->line($node->expr->getLine())->build(),
+				RuleErrorBuilder::message(
+					sprintf(
+						'Negated boolean expression is always %s.',
+						$exprType->getValue() ? 'false' : 'true'
+					)
+				)->line($node->expr->getLine())->build(),
 			];
 		}
 

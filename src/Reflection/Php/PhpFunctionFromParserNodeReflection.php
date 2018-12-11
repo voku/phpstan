@@ -170,6 +170,7 @@ class PhpFunctionFromParserNodeReflection implements \PHPStan\Reflection\Functio
 		) {
 			$phpDocReturnType = null;
 		}
+
 		return TypehintHelper::decideType($this->realReturnType, $phpDocReturnType);
 	}
 

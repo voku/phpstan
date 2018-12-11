@@ -14,6 +14,7 @@ class UnusedFunctionParametersCheck
 	 * @param string[] $parameterNames
 	 * @param \PhpParser\Node[] $statements
 	 * @param string $unusedParameterMessage
+	 *
 	 * @return string[]
 	 */
 	public function getUnusedParameters(
@@ -41,7 +42,8 @@ class UnusedFunctionParametersCheck
 
 	/**
 	 * @param \PHPStan\Analyser\Scope $scope
-	 * @param \PhpParser\Node[]|\PhpParser\Node|scalar $node
+	 * @param \PhpParser\Node|\PhpParser\Node[]|scalar $node
+	 *
 	 * @return string[]
 	 */
 	private function getUsedVariables(Scope $scope, $node): array

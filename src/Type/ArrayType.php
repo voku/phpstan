@@ -222,6 +222,7 @@ class ArrayType implements StaticResolvableType
 
 	/**
 	 * @param \PHPStan\Reflection\ClassMemberAccessAnswerer $scope
+	 *
 	 * @return \PHPStan\Reflection\ParametersAcceptor[]
 	 */
 	public function getCallableParametersAcceptors(ClassMemberAccessAnswerer $scope): array
@@ -266,14 +267,20 @@ class ArrayType implements StaticResolvableType
 	public static function castToArrayKeyType(Type $offsetType): Type
 	{
 		if ($offsetType instanceof UnionType) {
-			return TypeCombinator::union(...array_map(static function (Type $type): Type {
-				return self::castToArrayKeyType($type);
-			}, $offsetType->getTypes()));
+			return TypeCombinator::union(
+				...array_map(
+					static function (Type $type): Type {
+						return self::castToArrayKeyType($type);
+					},
+					$offsetType->getTypes()
+				)
+			);
 		}
 
 		if ($offsetType instanceof ConstantScalarType) {
 			/** @var int|string $offsetValue */
 			$offsetValue = key([$offsetType->getValue() => null]);
+
 			return is_int($offsetValue) ? new ConstantIntegerType($offsetValue) : new ConstantStringType($offsetValue);
 		}
 
@@ -290,6 +297,7 @@ class ArrayType implements StaticResolvableType
 
 	/**
 	 * @param mixed[] $properties
+	 *
 	 * @return Type
 	 */
 	public static function __set_state(array $properties): Type

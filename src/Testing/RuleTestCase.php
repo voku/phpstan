@@ -36,9 +36,11 @@ abstract class RuleTestCase extends \PHPStan\Testing\TestCase
 	private function getAnalyser(): Analyser
 	{
 		if ($this->analyser === null) {
-			$registry = new Registry([
-				$this->getRule(),
-			]);
+			$registry = new Registry(
+				[
+					$this->getRule(),
+				]
+			);
 
 			$broker = $this->createBroker();
 			$printer = new \PhpParser\PrettyPrinter\Standard();
@@ -119,6 +121,7 @@ abstract class RuleTestCase extends \PHPStan\Testing\TestCase
 				if (!isset($error[1])) {
 					throw new \InvalidArgumentException('Missing expected file line.');
 				}
+
 				return $strictlyTypedSprintf($error[1], $error[0]);
 			},
 			$expectedErrors

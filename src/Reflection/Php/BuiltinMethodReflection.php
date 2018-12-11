@@ -8,24 +8,24 @@ interface BuiltinMethodReflection
 	public function getName(): string;
 
 	/**
-	 * @return string|false
+	 * @return false|string
 	 */
 	public function getFileName();
 
 	public function getDeclaringClass(): \ReflectionClass;
 
 	/**
-	 * @return int|false
+	 * @return false|int
 	 */
 	public function getStartLine();
 
 	/**
-	 * @return int|false
+	 * @return false|int
 	 */
 	public function getEndLine();
 
 	/**
-	 * @return string|false
+	 * @return false|string
 	 */
 	public function getDocComment();
 

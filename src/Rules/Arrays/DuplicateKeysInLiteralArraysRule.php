@@ -28,6 +28,7 @@ class DuplicateKeysInLiteralArraysRule implements \PHPStan\Rules\Rule
 	/**
 	 * @param \PhpParser\Node\Expr\Array_ $node
 	 * @param \PHPStan\Analyser\Scope $scope
+	 *
 	 * @return RuleError[]
 	 */
 	public function processNode(\PhpParser\Node $node, Scope $scope): array
@@ -71,13 +72,15 @@ class DuplicateKeysInLiteralArraysRule implements \PHPStan\Rules\Rule
 
 		$messages = [];
 		foreach (array_keys($duplicateKeys) as $value) {
-			$messages[] = RuleErrorBuilder::message(sprintf(
-				'Array has %d %s with value %s (%s).',
-				count($printedValues[$value]),
-				count($printedValues[$value]) === 1 ? 'duplicate key' : 'duplicate keys',
-				var_export($value, true),
-				implode(', ', $printedValues[$value])
-			))->line($valueLines[$value])->build();
+			$messages[] = RuleErrorBuilder::message(
+				sprintf(
+					'Array has %d %s with value %s (%s).',
+					count($printedValues[$value]),
+					count($printedValues[$value]) === 1 ? 'duplicate key' : 'duplicate keys',
+					var_export($value, true),
+					implode(', ', $printedValues[$value])
+				)
+			)->line($valueLines[$value])->build();
 		}
 
 		return $messages;

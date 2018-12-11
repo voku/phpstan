@@ -8,7 +8,7 @@ use PHPStan\PhpDoc\Tag\ThrowsTag;
 class ResolvedPhpDocBlock
 {
 
-	/** @var array<string|int, \PHPStan\PhpDoc\Tag\VarTag> */
+	/** @var array<int|string, \PHPStan\PhpDoc\Tag\VarTag> */
 	private $varTags;
 
 	/** @var array<string, \PHPStan\PhpDoc\Tag\MethodTag> */
@@ -36,7 +36,7 @@ class ResolvedPhpDocBlock
 	private $isFinal;
 
 	/**
-	 * @param array<string|int, \PHPStan\PhpDoc\Tag\VarTag> $varTags
+	 * @param array<int|string, \PHPStan\PhpDoc\Tag\VarTag> $varTags
 	 * @param array<string, \PHPStan\PhpDoc\Tag\MethodTag> $methodTags
 	 * @param array<string, \PHPStan\PhpDoc\Tag\PropertyTag> $propertyTags
 	 * @param array<string, \PHPStan\PhpDoc\Tag\ParamTag> $paramTags
@@ -70,7 +70,7 @@ class ResolvedPhpDocBlock
 	}
 
 	/**
-	 * @param array<string|int, \PHPStan\PhpDoc\Tag\VarTag> $varTags
+	 * @param array<int|string, \PHPStan\PhpDoc\Tag\VarTag> $varTags
 	 * @param array<string, \PHPStan\PhpDoc\Tag\MethodTag> $methodTags
 	 * @param array<string, \PHPStan\PhpDoc\Tag\PropertyTag> $propertyTags
 	 * @param array<string, \PHPStan\PhpDoc\Tag\ParamTag> $paramTags
@@ -79,6 +79,7 @@ class ResolvedPhpDocBlock
 	 * @param bool $isDeprecated
 	 * @param bool $isInternal
 	 * @param bool $isFinal
+	 *
 	 * @return self
 	 */
 	public static function create(
@@ -111,9 +112,8 @@ class ResolvedPhpDocBlock
 		return new self([], [], [], [], null, null, false, false, false);
 	}
 
-
 	/**
-	 * @return array<string|int, \PHPStan\PhpDoc\Tag\VarTag>
+	 * @return array<int|string, \PHPStan\PhpDoc\Tag\VarTag>
 	 */
 	public function getVarTags(): array
 	{
@@ -171,6 +171,7 @@ class ResolvedPhpDocBlock
 
 	/**
 	 * @param mixed[] $properties
+	 *
 	 * @return self
 	 */
 	public static function __set_state(array $properties): self

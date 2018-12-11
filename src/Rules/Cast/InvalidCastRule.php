@@ -38,6 +38,7 @@ class InvalidCastRule implements \PHPStan\Rules\Rule
 	/**
 	 * @param \PhpParser\Node\Expr\Cast $node
 	 * @param \PHPStan\Analyser\Scope $scope
+	 *
 	 * @return RuleError[]
 	 */
 	public function processNode(Node $node, Scope $scope): array
@@ -86,11 +87,13 @@ class InvalidCastRule implements \PHPStan\Rules\Rule
 			}
 
 			return [
-				RuleErrorBuilder::message(sprintf(
-					'Cannot cast %s to %s.',
-					$scope->getType($node->expr)->describe(VerbosityLevel::value()),
-					$shortName
-				))->build(),
+				RuleErrorBuilder::message(
+					sprintf(
+						'Cannot cast %s to %s.',
+						$scope->getType($node->expr)->describe(VerbosityLevel::value()),
+						$shortName
+					)
+				)->build(),
 			];
 		}
 

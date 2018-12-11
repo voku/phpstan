@@ -23,6 +23,7 @@ class VerbosityLevel
 	private static function create(int $value): self
 	{
 		self::$registry[$value] = self::$registry[$value] ?? new self($value);
+
 		return self::$registry[$value];
 	}
 
@@ -45,6 +46,7 @@ class VerbosityLevel
 	 * @param callable(): string $typeOnlyCallback
 	 * @param callable(): string $valueCallback
 	 * @param callable(): string|null $preciseCallback
+	 *
 	 * @return string
 	 */
 	public function handle(

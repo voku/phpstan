@@ -21,15 +21,18 @@ class FileExcluder
 		array $analyseExcludes
 	)
 	{
-		$this->analyseExcludes = array_map(function (string $exclude) use ($fileHelper): string {
-			$normalized = $fileHelper->normalizePath($exclude);
+		$this->analyseExcludes = array_map(
+			function (string $exclude) use ($fileHelper): string {
+				$normalized = $fileHelper->normalizePath($exclude);
 
-			if ($this->isFnmatchPattern($normalized)) {
-				return $normalized;
-			}
+				if ($this->isFnmatchPattern($normalized)) {
+					return $normalized;
+				}
 
-			return $fileHelper->absolutizePath($normalized);
-		}, $analyseExcludes);
+				return $fileHelper->absolutizePath($normalized);
+			},
+			$analyseExcludes
+		);
 	}
 
 	public function isExcludedFromAnalysing(string $file): bool

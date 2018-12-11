@@ -38,6 +38,7 @@ class ArrayShiftFunctionReturnTypeExtension implements \PHPStan\Type\DynamicFunc
 				$arrayKeyTypes = $constantArray->getKeyTypes();
 				if (count($arrayKeyTypes) === 0) {
 					$valueTypes[] = new NullType();
+
 					continue;
 				}
 

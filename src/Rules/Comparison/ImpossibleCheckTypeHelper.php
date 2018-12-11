@@ -188,9 +188,14 @@ class ImpossibleCheckTypeHelper
 					return null;
 				}
 			}
-			$types = TypeCombinator::union(...array_map(static function ($sureType) {
-				return $sureType[1];
-			}, array_values($sureTypes)));
+			$types = TypeCombinator::union(
+				...array_map(
+					static function ($sureType) {
+						return $sureType[1];
+					},
+					array_values($sureTypes)
+				)
+			);
 			if ($types instanceof NeverType) {
 				return false;
 			}
@@ -200,9 +205,14 @@ class ImpossibleCheckTypeHelper
 					return null;
 				}
 			}
-			$types = TypeCombinator::union(...array_map(static function ($sureNotType) {
-				return $sureNotType[1];
-			}, array_values($sureNotTypes)));
+			$types = TypeCombinator::union(
+				...array_map(
+					static function ($sureNotType) {
+						return $sureNotType[1];
+					},
+					array_values($sureNotTypes)
+				)
+			);
 			if ($types instanceof NeverType) {
 				return true;
 			}
@@ -214,6 +224,7 @@ class ImpossibleCheckTypeHelper
 	/**
 	 * @param Scope $scope
 	 * @param \PhpParser\Node\Arg[] $args
+	 *
 	 * @return string
 	 */
 	public function getArgumentsDescription(
@@ -225,9 +236,12 @@ class ImpossibleCheckTypeHelper
 			return '';
 		}
 
-		$descriptions = array_map(static function (Arg $arg) use ($scope): string {
-			return $scope->getType($arg->value)->describe(VerbosityLevel::value());
-		}, $args);
+		$descriptions = array_map(
+			static function (Arg $arg) use ($scope): string {
+				return $scope->getType($arg->value)->describe(VerbosityLevel::value());
+			},
+			$args
+		);
 
 		if (count($descriptions) < 3) {
 			return sprintf(' with %s', implode(' and ', $descriptions));

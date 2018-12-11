@@ -19,7 +19,7 @@ class NativeBuiltinMethodReflection implements BuiltinMethodReflection
 	}
 
 	/**
-	 * @return string|false
+	 * @return false|string
 	 */
 	public function getFileName()
 	{
@@ -32,7 +32,7 @@ class NativeBuiltinMethodReflection implements BuiltinMethodReflection
 	}
 
 	/**
-	 * @return int|false
+	 * @return false|int
 	 */
 	public function getStartLine()
 	{
@@ -40,7 +40,7 @@ class NativeBuiltinMethodReflection implements BuiltinMethodReflection
 	}
 
 	/**
-	 * @return int|false
+	 * @return false|int
 	 */
 	public function getEndLine()
 	{
@@ -48,7 +48,7 @@ class NativeBuiltinMethodReflection implements BuiltinMethodReflection
 	}
 
 	/**
-	 * @return string|false
+	 * @return false|string
 	 */
 	public function getDocComment()
 	{

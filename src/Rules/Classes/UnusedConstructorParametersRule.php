@@ -28,6 +28,7 @@ class UnusedConstructorParametersRule implements \PHPStan\Rules\Rule
 	/**
 	 * @param \PhpParser\Node\Stmt\ClassMethod $node
 	 * @param \PHPStan\Analyser\Scope $scope
+	 *
 	 * @return string[]
 	 */
 	public function processNode(Node $node, Scope $scope): array
@@ -51,12 +52,16 @@ class UnusedConstructorParametersRule implements \PHPStan\Rules\Rule
 
 		return $this->check->getUnusedParameters(
 			$scope,
-			array_map(static function (Param $parameter): string {
-				if (!$parameter->var instanceof Variable || !is_string($parameter->var->name)) {
-					throw new \PHPStan\ShouldNotHappenException();
-				}
-				return $parameter->var->name;
-			}, $node->params),
+			array_map(
+				static function (Param $parameter): string {
+					if (!$parameter->var instanceof Variable || !is_string($parameter->var->name)) {
+						throw new \PHPStan\ShouldNotHappenException();
+					}
+
+					return $parameter->var->name;
+				},
+				$node->params
+			),
 			$node->stmts,
 			$message
 		);

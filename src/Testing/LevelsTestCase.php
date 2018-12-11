@@ -22,6 +22,7 @@ abstract class LevelsTestCase extends \PHPUnit\Framework\TestCase
 
 	/**
 	 * @dataProvider dataTopics
+	 *
 	 * @param string $topic
 	 */
 	public function testLevels(
@@ -109,9 +110,11 @@ abstract class LevelsTestCase extends \PHPUnit\Framework\TestCase
 		if (count($expectedMessages) === 0) {
 			try {
 				$this->assertFileNotExists($expectedJsonFile);
+
 				return null;
 			} catch (\PHPUnit\Framework\AssertionFailedError $e) {
 				unlink($expectedJsonFile);
+
 				return $e;
 			}
 		}
@@ -125,6 +128,7 @@ abstract class LevelsTestCase extends \PHPUnit\Framework\TestCase
 			);
 		} catch (\PHPUnit\Framework\AssertionFailedError $e) {
 			file_put_contents($expectedJsonFile, $actualOutput);
+
 			return $e;
 		}
 

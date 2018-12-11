@@ -45,6 +45,7 @@ class ScopeContext
 		if ($classReflection->isTrait()) {
 			throw new \PHPStan\ShouldNotHappenException();
 		}
+
 		return new self($this->file, $classReflection, null);
 	}
 

@@ -30,6 +30,7 @@ class DependencyResolver
 	/**
 	 * @param \PhpParser\Node $node
 	 * @param Scope $scope
+	 *
 	 * @return ReflectionWithFilename[]
 	 */
 	public function resolveDependencies(\PhpParser\Node $node, Scope $scope): array

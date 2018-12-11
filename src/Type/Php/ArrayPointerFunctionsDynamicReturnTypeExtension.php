@@ -48,6 +48,7 @@ class ArrayPointerFunctionsDynamicReturnTypeExtension implements \PHPStan\Type\D
 				$arrayKeyTypes = $constantArray->getKeyTypes();
 				if (count($arrayKeyTypes) === 0) {
 					$keyTypes[] = new ConstantBooleanType(false);
+
 					continue;
 				}
 

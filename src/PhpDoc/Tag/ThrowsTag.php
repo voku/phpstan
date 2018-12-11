@@ -22,6 +22,7 @@ class ThrowsTag
 
 	/**
 	 * @param mixed[] $properties
+	 *
 	 * @return ThrowsTag
 	 */
 	public static function __set_state(array $properties): self

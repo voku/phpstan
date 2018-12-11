@@ -42,6 +42,7 @@ class CaughtExceptionExistenceRule implements \PHPStan\Rules\Rule
 	/**
 	 * @param \PhpParser\Node\Stmt\Catch_ $node
 	 * @param \PHPStan\Analyser\Scope $scope
+	 *
 	 * @return RuleError[]
 	 */
 	public function processNode(Node $node, Scope $scope): array
@@ -51,6 +52,7 @@ class CaughtExceptionExistenceRule implements \PHPStan\Rules\Rule
 			$className = (string) $class;
 			if (!$this->broker->hasClass($className)) {
 				$errors[] = RuleErrorBuilder::message(sprintf('Caught class %s not found.', $className))->line($class->getLine())->build();
+
 				continue;
 			}
 

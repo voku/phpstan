@@ -47,7 +47,7 @@ class PhpPropertyReflection implements PropertyReflection, DeprecatableReflectio
 	}
 
 	/**
-	 * @return string|false
+	 * @return false|string
 	 */
 	public function getDocComment()
 	{

@@ -87,11 +87,13 @@ class FileTypeMapper
 		}
 
 		assert($this->inProcess[$fileName][$phpDocKey] instanceof ResolvedPhpDocBlock);
+
 		return $this->inProcess[$fileName][$phpDocKey];
 	}
 
 	/**
 	 * @param string $fileName
+	 *
 	 * @return \PHPStan\PhpDoc\ResolvedPhpDocBlock[]
 	 */
 	private function getResolvedPhpDocMap(string $fileName): array
@@ -117,6 +119,7 @@ class FileTypeMapper
 
 	/**
 	 * @param string $fileName
+	 *
 	 * @return \PHPStan\PhpDoc\ResolvedPhpDocBlock[]
 	 */
 	private function createResolvedPhpDocMap(string $fileName): array
@@ -143,6 +146,7 @@ class FileTypeMapper
 	 * @param string $fileName
 	 * @param string|null $lookForTrait
 	 * @param string|null $traitUseClass
+	 *
 	 * @return callable[]
 	 */
 	private function createFilePhpDocMap(
@@ -211,14 +215,17 @@ class FileTypeMapper
 						);
 						$phpDocMap = array_merge($phpDocMap, $traitPhpDocMap);
 					}
+
 					return;
 				} elseif ($node instanceof \PhpParser\Node\Stmt\Namespace_) {
 					$namespace = (string) $node->name;
+
 					return;
 				} elseif ($node instanceof \PhpParser\Node\Stmt\Use_ && $node->type === \PhpParser\Node\Stmt\Use_::TYPE_NORMAL) {
 					foreach ($node->uses as $use) {
 						$uses[strtolower($use->getAlias()->name)] = (string) $use->name;
 					}
+
 					return;
 				} elseif ($node instanceof \PhpParser\Node\Stmt\GroupUse) {
 					$prefix = (string) $node->prefix;
@@ -229,17 +236,22 @@ class FileTypeMapper
 
 						$uses[strtolower($use->getAlias()->name)] = sprintf('%s\\%s', $prefix, (string) $use->name);
 					}
+
 					return;
-				} elseif (!in_array(get_class($node), [
-					Node\Stmt\Property::class,
-					Node\Stmt\ClassMethod::class,
-					Node\Stmt\Function_::class,
-					Node\Stmt\Foreach_::class,
-					Node\Expr\Assign::class,
-					Node\Expr\AssignRef::class,
-					Node\Stmt\Class_::class,
-					Node\Stmt\ClassConst::class,
-				], true)) {
+				} elseif (!in_array(
+					get_class($node),
+					[
+						Node\Stmt\Property::class,
+						Node\Stmt\ClassMethod::class,
+						Node\Stmt\Function_::class,
+						Node\Stmt\Foreach_::class,
+						Node\Expr\Assign::class,
+						Node\Expr\AssignRef::class,
+						Node\Stmt\Class_::class,
+						Node\Stmt\ClassConst::class,
+					],
+					true
+				)) {
 					return;
 				}
 
@@ -272,7 +284,7 @@ class FileTypeMapper
 	}
 
 	/**
-	 * @param \PhpParser\Node[]|\PhpParser\Node|scalar $node
+	 * @param \PhpParser\Node|\PhpParser\Node[]|scalar $node
 	 * @param \Closure(\PhpParser\Node $node): mixed $nodeCallback
 	 * @param \Closure(\PhpParser\Node $node): void $endNodeCallback
 	 */

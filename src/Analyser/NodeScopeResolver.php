@@ -206,9 +206,13 @@ class NodeScopeResolver
 			if ($node instanceof If_) {
 				if ($this->findEarlyTermination($node->stmts, $scope) !== null) {
 					$scope = $scope->filterByFalseyValue($node->cond);
-					$this->processNode($node->cond, $scope, function (Node $node, Scope $inScope) use (&$scope): void {
-						$this->specifyFetchedPropertyForInnerScope($node, $inScope, true, $scope);
-					});
+					$this->processNode(
+						$node->cond,
+						$scope,
+						function (Node $node, Scope $inScope) use (&$scope): void {
+							$this->specifyFetchedPropertyForInnerScope($node, $inScope, true, $scope);
+						}
+					);
 				}
 			} elseif ($node instanceof Node\Stmt\Declare_) {
 				foreach ($node->declares as $declare) {
@@ -218,15 +222,18 @@ class NodeScopeResolver
 						&& $declare->value->value === 1
 					) {
 						$scope = $scope->enterDeclareStrictTypes();
+
 						break;
 					}
 				}
 			} elseif ($node instanceof Node\Stmt\Expression) {
-				$scope = $scope->filterBySpecifiedTypes($this->typeSpecifier->specifyTypesInCondition(
-					$scope,
-					$node->expr,
-					TypeSpecifierContext::createNull()
-				));
+				$scope = $scope->filterBySpecifiedTypes(
+					$this->typeSpecifier->specifyTypesInCondition(
+						$scope,
+						$node->expr,
+						TypeSpecifierContext::createNull()
+					)
+				);
 			}
 		}
 	}
@@ -459,12 +466,21 @@ class NodeScopeResolver
 				$nodeCallback
 			);
 
-			$scope = $this->lookForAssignsInBranches($scope, [
-				new StatementList($scope, $node->stmts, false, function (Scope $scope) use ($node): Scope {
-					return $this->enterForeach($scope, $node);
-				}),
-				new StatementList($scope, []),
-			], LookForAssignsSettings::insideLoop());
+			$scope = $this->lookForAssignsInBranches(
+				$scope,
+				[
+					new StatementList(
+						$scope,
+						$node->stmts,
+						false,
+						function (Scope $scope) use ($node): Scope {
+							return $this->enterForeach($scope, $node);
+						}
+					),
+					new StatementList($scope, []),
+				],
+				LookForAssignsSettings::insideLoop()
+			);
 			$scope = $this->enterForeach($scope, $node);
 
 			$this->processNodes($node->stmts, $scope->enterFirstLevelStatements(), $nodeCallback);
@@ -476,24 +492,37 @@ class NodeScopeResolver
 			foreach ($node->init as $initExpr) {
 				$scope = $this->lookForAssigns($scope, $initExpr, TrinaryLogic::createYes(), LookForAssignsSettings::insideLoop());
 			}
-			$scopeLoopMightHaveRun = $this->lookForAssignsInBranches($scope, [
-				new StatementList($scope, $node->cond),
-				new StatementList($scope, $node->stmts),
-				new StatementList($scope, $node->loop),
-				new StatementList($scope, []),
-			], LookForAssignsSettings::insideLoop());
+			$scopeLoopMightHaveRun = $this->lookForAssignsInBranches(
+				$scope,
+				[
+					new StatementList($scope, $node->cond),
+					new StatementList($scope, $node->stmts),
+					new StatementList($scope, $node->loop),
+					new StatementList($scope, []),
+				],
+				LookForAssignsSettings::insideLoop()
+			);
 
 			$this->processNodes($node->cond, $scopeLoopMightHaveRun, $nodeCallback);
 
-			$scopeLoopDefinitelyRan = $this->lookForAssignsInBranches($scope, [
-				new StatementList($scope, $node->stmts, false, static function (Scope $scope) use ($node): Scope {
-					foreach ($node->cond as $condExpr) {
-						$scope = $scope->filterByTruthyValue($condExpr);
-					}
+			$scopeLoopDefinitelyRan = $this->lookForAssignsInBranches(
+				$scope,
+				[
+					new StatementList(
+						$scope,
+						$node->stmts,
+						false,
+						static function (Scope $scope) use ($node): Scope {
+							foreach ($node->cond as $condExpr) {
+								$scope = $scope->filterByTruthyValue($condExpr);
+							}
 
-					return $scope;
-				}),
-			], LookForAssignsSettings::insideLoop());
+							return $scope;
+						}
+					),
+				],
+				LookForAssignsSettings::insideLoop()
+			);
 
 			$this->processNodes($node->loop, $scopeLoopDefinitelyRan, $nodeCallback);
 
@@ -514,23 +543,42 @@ class NodeScopeResolver
 				TrinaryLogic::createYes(),
 				LookForAssignsSettings::default()
 			);
-			$condScope = $this->lookForAssignsInBranches($scope, [
-				new StatementList($bodyScope, $node->stmts, false, static function (Scope $scope) use ($node): Scope {
-					return $scope->filterByTruthyValue($node->cond);
-				}),
-				new StatementList($scope, []),
-			], LookForAssignsSettings::insideLoop());
+			$condScope = $this->lookForAssignsInBranches(
+				$scope,
+				[
+					new StatementList(
+						$bodyScope,
+						$node->stmts,
+						false,
+						static function (Scope $scope) use ($node): Scope {
+							return $scope->filterByTruthyValue($node->cond);
+						}
+					),
+					new StatementList($scope, []),
+				],
+				LookForAssignsSettings::insideLoop()
+			);
 			$this->processNode($node->cond, $condScope, $nodeCallback);
 
-			$bodyScope = $this->lookForAssignsInBranches($bodyScope, [
-				new StatementList($bodyScope, $node->stmts, false, static function (Scope $scope) use ($node): Scope {
-					return $scope->filterByTruthyValue($node->cond);
-				}),
-				new StatementList($bodyScope, []),
-			], LookForAssignsSettings::insideLoop());
+			$bodyScope = $this->lookForAssignsInBranches(
+				$bodyScope,
+				[
+					new StatementList(
+						$bodyScope,
+						$node->stmts,
+						false,
+						static function (Scope $scope) use ($node): Scope {
+							return $scope->filterByTruthyValue($node->cond);
+						}
+					),
+					new StatementList($bodyScope, []),
+				],
+				LookForAssignsSettings::insideLoop()
+			);
 			$bodyScope = $this->lookForAssigns($bodyScope, $node->cond, TrinaryLogic::createYes(), LookForAssignsSettings::insideLoop());
 			$bodyScope = $bodyScope->filterByTruthyValue($node->cond);
 			$this->processNodes($node->stmts, $bodyScope, $nodeCallback);
+
 			return;
 		} elseif ($node instanceof Catch_) {
 			if (!is_string($node->var->name)) {
@@ -566,10 +614,14 @@ class NodeScopeResolver
 			}
 
 			if (count($usesByRef) > 0) {
-				$closureScope = $this->lookForAssignsInBranches($scope, [
-					new StatementList($scope, $node->stmts),
-					new StatementList($scope, []),
-				], LookForAssignsSettings::insideClosure());
+				$closureScope = $this->lookForAssignsInBranches(
+					$scope,
+					[
+						new StatementList($scope, $node->stmts),
+						new StatementList($scope, []),
+					],
+					LookForAssignsSettings::insideClosure()
+				);
 				/** @var Expr\ClosureUse $closureUse */
 				foreach ($usesByRef as $closureUse) {
 					if (!is_string($closureUse->var->name)) {
@@ -705,6 +757,7 @@ class NodeScopeResolver
 					$switchScope = $scope;
 				}
 			}
+
 			return;
 		} elseif ($node instanceof TryCatch) {
 			$statements = [];
@@ -730,10 +783,13 @@ class NodeScopeResolver
 				if (!is_string($catch->var->name)) {
 					throw new \PHPStan\ShouldNotHappenException();
 				}
-				$statements[] = new StatementList($scope->enterCatch(
-					$catch->types,
-					$catch->var->name
-				), $catch->stmts);
+				$statements[] = new StatementList(
+					$scope->enterCatch(
+						$catch->types,
+						$catch->var->name
+					),
+					$catch->stmts
+				);
 			}
 
 			if ($node->finally !== null) {
@@ -820,11 +876,15 @@ class NodeScopeResolver
 				}
 
 				if ($node instanceof Do_ && $subNodeName === 'stmts') {
-					$scope = $this->lookForAssignsInBranches($scope, [
-						new StatementList($scope, $node->stmts),
-						new StatementList($scope, [$node->cond], true),
-						new StatementList($scope, []),
-					], LookForAssignsSettings::insideLoop());
+					$scope = $this->lookForAssignsInBranches(
+						$scope,
+						[
+							new StatementList($scope, $node->stmts),
+							new StatementList($scope, [$node->cond], true),
+							new StatementList($scope, []),
+						],
+						LookForAssignsSettings::insideLoop()
+					);
 				}
 
 				$this->processNodes($subNode, $scope, $nodeCallback, $argClosureBindScope);
@@ -883,14 +943,22 @@ class NodeScopeResolver
 					$scope = $this->lookForAssigns($scope, $node->cond, TrinaryLogic::createYes(), LookForAssignsSettings::default());
 					if ($subNodeName === 'if') {
 						$scope = $scope->filterByTruthyValue($node->cond);
-						$this->processNode($node->cond, $scope, function (Node $node, Scope $inScope) use (&$scope): void {
-							$this->specifyFetchedPropertyForInnerScope($node, $inScope, false, $scope);
-						});
+						$this->processNode(
+							$node->cond,
+							$scope,
+							function (Node $node, Scope $inScope) use (&$scope): void {
+								$this->specifyFetchedPropertyForInnerScope($node, $inScope, false, $scope);
+							}
+						);
 					} elseif ($subNodeName === 'else') {
 						$scope = $scope->filterByFalseyValue($node->cond);
-						$this->processNode($node->cond, $scope, function (Node $node, Scope $inScope) use (&$scope): void {
-							$this->specifyFetchedPropertyForInnerScope($node, $inScope, true, $scope);
-						});
+						$this->processNode(
+							$node->cond,
+							$scope,
+							function (Node $node, Scope $inScope) use (&$scope): void {
+								$this->specifyFetchedPropertyForInnerScope($node, $inScope, true, $scope);
+							}
+						);
 					}
 				}
 
@@ -1081,6 +1149,7 @@ class NodeScopeResolver
 						&& $elseIfConditionType->getValue()
 					) {
 						$lastElseIfConditionIsTrue = true;
+
 						break;
 					}
 				}
@@ -1106,10 +1175,13 @@ class NodeScopeResolver
 				if (!is_string($catch->var->name)) {
 					throw new \PHPStan\ShouldNotHappenException();
 				}
-				$statements[] = new StatementList($scope->enterCatch(
-					$catch->types,
-					$catch->var->name
-				), array_merge([new Node\Stmt\Nop()], $catch->stmts));
+				$statements[] = new StatementList(
+					$scope->enterCatch(
+						$catch->types,
+						$catch->var->name
+					),
+					array_merge([new Node\Stmt\Nop()], $catch->stmts)
+				);
 			}
 
 			$scope = $this->lookForAssignsInBranches($scope, $statements, $lookForAssignsSettings);
@@ -1154,10 +1226,14 @@ class NodeScopeResolver
 			if (
 				$node instanceof FuncCall
 				&& $node->name instanceof Name
-				&& in_array((string) $node->name, [
-					'fopen',
-					'file_get_contents',
-				], true)
+				&& in_array(
+					(string) $node->name,
+					[
+						'fopen',
+						'file_get_contents',
+					],
+					true
+				)
 			) {
 				$scope = $scope->assignVariable('http_response_header', new ArrayType(new IntegerType(), new StringType()), $certainty);
 			}
@@ -1165,10 +1241,14 @@ class NodeScopeResolver
 			if (
 				$node instanceof FuncCall
 				&& $node->name instanceof Name
-				&& in_array(strtolower((string) $node->name), [
-					'array_push',
-					'array_unshift',
-				], true)
+				&& in_array(
+					strtolower((string) $node->name),
+					[
+						'array_push',
+						'array_unshift',
+					],
+					true
+				)
 				&& count($node->args) >= 2
 			) {
 				$argumentTypes = [];
@@ -1183,6 +1263,7 @@ class NodeScopeResolver
 						} else {
 							$argumentTypes[] = $iterableValueType;
 						}
+
 						continue;
 					}
 
@@ -1233,10 +1314,14 @@ class NodeScopeResolver
 			if (
 				$node instanceof FuncCall
 				&& $node->name instanceof Name
-				&& in_array(strtolower((string) $node->name), [
-					'array_pop',
-					'array_shift',
-				], true)
+				&& in_array(
+					strtolower((string) $node->name),
+					[
+						'array_pop',
+						'array_shift',
+					],
+					true
+				)
 				&& count($node->args) >= 1
 			) {
 				$arrayArg = $node->args[0]->value;
@@ -1301,9 +1386,13 @@ class NodeScopeResolver
 				$scope = $this->lookForAssigns($scope, $arg, $certainty, $lookForAssignsSettings);
 			}
 		} elseif ($node instanceof Do_) {
-			$scope = $this->lookForAssignsInBranches($scope, [
-				new StatementList($scope, $node->stmts),
-			], LookForAssignsSettings::afterLoop());
+			$scope = $this->lookForAssignsInBranches(
+				$scope,
+				[
+					new StatementList($scope, $node->stmts),
+				],
+				LookForAssignsSettings::afterLoop()
+			);
 			$scope = $this->lookForAssigns($scope, $node->cond, TrinaryLogic::createYes(), LookForAssignsSettings::afterLoop());
 			$scope = $scope->filterByFalseyValue($node->cond);
 		} elseif ($node instanceof Switch_) {
@@ -1326,6 +1415,7 @@ class NodeScopeResolver
 					if ($this->findStatementEarlyTermination($statement, $scope) !== null) {
 						$statementLists[] = new StatementList($scope, $tmpStatements);
 						$tmpStatements = [];
+
 						break;
 					}
 				}
@@ -1365,9 +1455,14 @@ class NodeScopeResolver
 			$scope = $this->lookForAssigns($scope, $node->cond, $whileAssignmentsCertainty, LookForAssignsSettings::afterLoop());
 
 			$statements = [
-				new StatementList($scope, $node->stmts, false, static function (Scope $scope) use ($node): Scope {
-					return $scope->filterByTruthyValue($node->cond);
-				}),
+				new StatementList(
+					$scope,
+					$node->stmts,
+					false,
+					static function (Scope $scope) use ($node): Scope {
+						return $scope->filterByTruthyValue($node->cond);
+					}
+				),
 				new StatementList($scope, []), // in order not to add variables existing only inside the for loop
 			];
 			$scope = $this->lookForAssignsInBranches($scope, $statements, LookForAssignsSettings::afterLoop());
@@ -1388,12 +1483,17 @@ class NodeScopeResolver
 			$scope = $this->lookForAssigns($scope, $node->expr, $certainty, $lookForAssignsSettings);
 			if (!$iterableAtLeastOnce->no()) {
 				$statements = [
-					new StatementList($scope, array_merge(
-						[new Node\Stmt\Nop()],
-						$node->stmts
-					), false, function (Scope $scope) use ($node): Scope {
-						return $this->enterForeach($scope, $node);
-					}),
+					new StatementList(
+						$scope,
+						array_merge(
+							[new Node\Stmt\Nop()],
+							$node->stmts
+						),
+						false,
+						function (Scope $scope) use ($node): Scope {
+							return $this->enterForeach($scope, $node);
+						}
+					),
 				];
 
 				if (!$iterableAtLeastOnce->yes()) {
@@ -1413,10 +1513,13 @@ class NodeScopeResolver
 		} elseif ($node instanceof Expr\Closure) {
 			$closureScope = $scope->enterAnonymousFunction($node);
 			$statements = [
-				new StatementList($closureScope, array_merge(
-					[new Node\Stmt\Nop()],
-					$node->stmts
-				)),
+				new StatementList(
+					$closureScope,
+					array_merge(
+						[new Node\Stmt\Nop()],
+						$node->stmts
+					)
+				),
 				new StatementList($closureScope, []),
 			];
 			$closureScope = $this->lookForAssignsInBranches($scope, $statements, LookForAssignsSettings::insideClosure());
@@ -1580,12 +1683,14 @@ class NodeScopeResolver
 
 		if (isset($varTags[$variableName])) {
 			$variableType = $varTags[$variableName]->getType();
+
 			return $scope->assignVariable($variableName, $variableType, TrinaryLogic::createYes());
 
 		}
 
 		if (!$strict && count($varTags) === 1 && isset($varTags[0])) {
 			$variableType = $varTags[0]->getType();
+
 			return $scope->assignVariable($variableName, $variableType, TrinaryLogic::createYes());
 
 		}
@@ -1688,6 +1793,7 @@ class NodeScopeResolver
 	 * @param \PHPStan\Analyser\StatementList[] $statementsLists
 	 * @param \PHPStan\Analyser\LookForAssignsSettings $lookForAssignsSettings
 	 * @param int $counter
+	 *
 	 * @return Scope
 	 */
 	private function lookForAssignsInBranches(
@@ -1714,6 +1820,7 @@ class NodeScopeResolver
 						continue 2;
 					}
 					$branchScopeWithInitialScopeRemoved = $branchScopeWithInitialScopeRemoved->removeSpecified($initialScope);
+
 					break;
 				}
 			}
@@ -1748,6 +1855,7 @@ class NodeScopeResolver
 						$statementList
 					);
 				}
+
 				return $this->lookForAssignsInBranches(
 					$scope,
 					$newStatementLists,
@@ -1765,6 +1873,7 @@ class NodeScopeResolver
 	/**
 	 * @param \PhpParser\Node[] $statements
 	 * @param \PHPStan\Analyser\Scope $scope
+	 *
 	 * @return \PhpParser\Node|null
 	 */
 	private function findEarlyTermination(array $statements, Scope $scope): ?\PhpParser\Node
@@ -1917,7 +2026,7 @@ class NodeScopeResolver
 	}
 
 	/**
-	 * @param \PhpParser\Node[]|\PhpParser\Node|scalar $node
+	 * @param \PhpParser\Node|\PhpParser\Node[]|scalar $node
 	 * @param string $traitName
 	 * @param \PHPStan\Analyser\Scope $classScope
 	 * @param \Closure(\PhpParser\Node $node): void $nodeCallback
@@ -1927,6 +2036,7 @@ class NodeScopeResolver
 		if ($node instanceof Node) {
 			if ($node instanceof Node\Stmt\Trait_ && $traitName === (string) $node->namespacedName) {
 				$this->processNodes($node->stmts, $classScope->enterFirstLevelStatements(), $nodeCallback);
+
 				return;
 			}
 			if ($node instanceof Node\Stmt\ClassLike) {
@@ -1961,6 +2071,7 @@ class NodeScopeResolver
 	/**
 	 * @param Scope $scope
 	 * @param Node\FunctionLike $functionLike
+	 *
 	 * @return mixed[]
 	 */
 	private function getPhpDocs(Scope $scope, Node\FunctionLike $functionLike): array
@@ -2008,9 +2119,12 @@ class NodeScopeResolver
 				$trait,
 				$docComment
 			);
-			$phpDocParameterTypes = array_map(static function (ParamTag $tag): Type {
-				return $tag->getType();
-			}, $resolvedPhpDoc->getParamTags());
+			$phpDocParameterTypes = array_map(
+				static function (ParamTag $tag): Type {
+					return $tag->getType();
+				},
+				$resolvedPhpDoc->getParamTags()
+			);
 			$nativeReturnType = $scope->getFunctionType($functionLike->getReturnType(), false, false);
 			$phpDocReturnType = null;
 			if (

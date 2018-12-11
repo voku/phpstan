@@ -38,6 +38,7 @@ class ArrayKeyFirstDynamicReturnTypeExtension implements \PHPStan\Type\DynamicFu
 				$arrayKeyTypes = $constantArray->getKeyTypes();
 				if (count($arrayKeyTypes) === 0) {
 					$keyTypes[] = new NullType();
+
 					continue;
 				}
 

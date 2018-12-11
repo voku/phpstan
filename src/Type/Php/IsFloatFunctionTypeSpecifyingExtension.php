@@ -20,11 +20,15 @@ class IsFloatFunctionTypeSpecifyingExtension implements FunctionTypeSpecifyingEx
 
 	public function isFunctionSupported(FunctionReflection $functionReflection, FuncCall $node, TypeSpecifierContext $context): bool
 	{
-		return in_array(strtolower($functionReflection->getName()), [
-			'is_float',
-			'is_double',
-			'is_real',
-		], true)
+		return in_array(
+			strtolower($functionReflection->getName()),
+			[
+				'is_float',
+				'is_double',
+				'is_real',
+			],
+			true
+		)
 			&& isset($node->args[0])
 			&& !$context->null();
 	}

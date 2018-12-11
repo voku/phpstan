@@ -34,6 +34,7 @@ class FileFinder
 
 	/**
 	 * @param string[] $paths
+	 *
 	 * @return FileFinderResult
 	 */
 	public function findFiles(array $paths): FileFinderResult
@@ -55,9 +56,14 @@ class FileFinder
 			}
 		}
 
-		$files = array_values(array_filter($files, function (string $file): bool {
-			return !$this->fileExcluder->isExcludedFromAnalysing($file);
-		}));
+		$files = array_values(
+			array_filter(
+				$files,
+				function (string $file): bool {
+					return !$this->fileExcluder->isExcludedFromAnalysing($file);
+				}
+			)
+		);
 
 		return new FileFinderResult($files, $onlyFiles);
 	}

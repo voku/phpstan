@@ -52,6 +52,7 @@ class HasOffsetType implements CompoundType, AccessoryType
 		if ($this->equals($type)) {
 			return TrinaryLogic::createYes();
 		}
+
 		return $type->isOffsetAccessible()
 			->and($type->hasOffsetValueType($this->offsetType));
 	}

@@ -33,6 +33,7 @@ class IncompatibleDefaultParameterTypeRule implements Rule
 	/**
 	 * @param FunctionLike $node
 	 * @param Scope $scope
+	 *
 	 * @return RuleError[]
 	 */
 	public function processNode(Node $node, Scope $scope): array
@@ -82,15 +83,17 @@ class IncompatibleDefaultParameterTypeRule implements Rule
 				continue;
 			}
 
-			$errors[] = RuleErrorBuilder::message(sprintf(
-				'Default value of the parameter #%d $%s (%s) of %s %s() is incompatible with type %s.',
-				$paramI + 1,
-				$param->var->name,
-				$defaultValueType->describe(VerbosityLevel::value()),
-				$type,
-				$nameToPrint,
-				$parameterType->describe(VerbosityLevel::value())
-			))->line($param->getLine())->build();
+			$errors[] = RuleErrorBuilder::message(
+				sprintf(
+					'Default value of the parameter #%d $%s (%s) of %s %s() is incompatible with type %s.',
+					$paramI + 1,
+					$param->var->name,
+					$defaultValueType->describe(VerbosityLevel::value()),
+					$type,
+					$nameToPrint,
+					$parameterType->describe(VerbosityLevel::value())
+				)
+			)->line($param->getLine())->build();
 		}
 
 		return $errors;

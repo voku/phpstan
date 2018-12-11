@@ -28,6 +28,7 @@ class TypeCombinator
 			foreach ($typeToRemove->getTypes() as $unionTypeToRemove) {
 				$fromType = self::remove($fromType, $unionTypeToRemove);
 			}
+
 			return $fromType;
 		}
 
@@ -114,6 +115,7 @@ class TypeCombinator
 		for ($i = 0; $i < $typesCount; $i++) {
 			if ($types[$i] instanceof NeverType) {
 				unset($types[$i]);
+
 				continue;
 			}
 			if ($types[$i] instanceof MixedType) {
@@ -123,6 +125,7 @@ class TypeCombinator
 				$type = $types[$i];
 				$scalarTypes[get_class($type)][md5($type->describe(VerbosityLevel::precise()))] = $type;
 				unset($types[$i]);
+
 				continue;
 			}
 			if ($types[$i] instanceof BooleanType) {
@@ -143,10 +146,12 @@ class TypeCombinator
 				foreach ($types[$i]->getTypes() as $innerType) {
 					if ($innerType instanceof ArrayType) {
 						$intermediateArrayType = $innerType;
+
 						continue;
 					}
 					if ($innerType instanceof AccessoryType || $innerType instanceof CallableType) {
 						$intermediateAccessoryTypes[] = $innerType;
+
 						continue;
 					}
 				}
@@ -155,6 +160,7 @@ class TypeCombinator
 					$arrayTypes[] = $intermediateArrayType;
 					$arrayAccessoryTypes = array_merge($arrayAccessoryTypes, $intermediateAccessoryTypes);
 					unset($types[$i]);
+
 					continue;
 				}
 			}
@@ -182,6 +188,7 @@ class TypeCombinator
 						self::union($types[$i]->getIterableValueType(), $types[$j]->getIterableValueType())
 					);
 					array_splice($types, $j, 1);
+
 					continue 2;
 				}
 			}
@@ -196,6 +203,7 @@ class TypeCombinator
 					&& $types[$j]->isSuperTypeOf($types[$i])->yes()
 				) {
 					array_splice($types, $i--, 1);
+
 					continue 2;
 				}
 
@@ -204,6 +212,7 @@ class TypeCombinator
 					&& $types[$i]->isSuperTypeOf($types[$j])->yes()
 				) {
 					array_splice($types, $j--, 1);
+
 					continue 1;
 				}
 			}
@@ -215,11 +224,13 @@ class TypeCombinator
 			}
 			if ($classType === ConstantBooleanType::class && count($scalarTypeItems) === 2) {
 				$types[] = new BooleanType();
+
 				continue;
 			}
 			foreach ($scalarTypeItems as $type) {
 				if (count($scalarTypeItems) > self::CONSTANT_SCALAR_UNION_THRESHOLD) {
 					$types[] = $type->generalize();
+
 					break;
 				}
 				$types[] = $type;
@@ -239,6 +250,7 @@ class TypeCombinator
 	/**
 	 * @param ArrayType[] $arrayTypes
 	 * @param Type[] $accessoryTypes
+	 *
 	 * @return Type[]
 	 */
 	private static function processArrayTypes(array $arrayTypes, array $accessoryTypes): array
@@ -256,7 +268,7 @@ class TypeCombinator
 		$generalArrayOcurred = false;
 		$constantKeyTypesNumbered = [];
 
-		/** @var int|float $nextConstantKeyTypeIndex */
+		/** @var float|int $nextConstantKeyTypeIndex */
 		$nextConstantKeyTypeIndex = 1;
 
 		foreach ($arrayTypes as $arrayType) {
@@ -264,6 +276,7 @@ class TypeCombinator
 				$keyTypesForGeneralArray[] = $arrayType->getKeyType();
 				$valueTypesForGeneralArray[] = $arrayType->getItemType();
 				$generalArrayOcurred = true;
+
 				continue;
 			}
 
@@ -280,16 +293,20 @@ class TypeCombinator
 				$nextConstantKeyTypeIndex *= 2;
 				if (!is_int($nextConstantKeyTypeIndex)) {
 					$generalArrayOcurred = true;
+
 					continue;
 				}
 			}
 		}
 
 		$createGeneralArray = static function () use ($keyTypesForGeneralArray, $valueTypesForGeneralArray, $accessoryTypes): Type {
-			return TypeCombinator::intersect(new ArrayType(
-				self::union(...$keyTypesForGeneralArray),
-				self::union(...$valueTypesForGeneralArray)
-			), ...$accessoryTypes);
+			return TypeCombinator::intersect(
+				new ArrayType(
+					self::union(...$keyTypesForGeneralArray),
+					self::union(...$valueTypesForGeneralArray)
+				),
+				...$accessoryTypes
+			);
 		};
 
 		if ($generalArrayOcurred) {
@@ -315,11 +332,12 @@ class TypeCombinator
 				$bucket = [];
 				foreach ($arrayType->getKeyTypes() as $i => $keyType) {
 					$bucket[$keyType->getValue()] = [
-						'keyType' => $keyType,
+						'keyType'   => $keyType,
 						'valueType' => $arrayType->getValueTypes()[$i],
 					];
 				}
 				$constantArraysBuckets[$arrayIndex] = $bucket;
+
 				continue;
 			}
 
@@ -396,6 +414,7 @@ class TypeCombinator
 
 				} elseif ($isSuperTypeA->yes()) {
 					array_splice($types, $j--, 1);
+
 					continue;
 				}
 
@@ -407,6 +426,7 @@ class TypeCombinator
 
 				if ($isSuperTypeB->yes()) {
 					array_splice($types, $i--, 1);
+
 					continue 2;
 				}
 			}

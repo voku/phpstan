@@ -22,6 +22,7 @@ class ReturnTag
 
 	/**
 	 * @param mixed[] $properties
+	 *
 	 * @return ReturnTag
 	 */
 	public static function __set_state(array $properties): self

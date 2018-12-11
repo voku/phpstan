@@ -44,10 +44,12 @@ class ArrayFilterFunctionReturnTypeReturnTypeExtension implements \PHPStan\Type\
 			$itemType = $arrayArgType->getIterableValueType();
 
 			if ($arrayArgType instanceof MixedType) {
-				return new BenevolentUnionType([
-					new ArrayType(new MixedType(), new MixedType()),
-					new NullType(),
-				]);
+				return new BenevolentUnionType(
+					[
+						new ArrayType(new MixedType(), new MixedType()),
+						new NullType(),
+					]
+				);
 			}
 
 			if ($callbackArg === null) {
@@ -79,14 +81,16 @@ class ArrayFilterFunctionReturnTypeReturnTypeExtension implements \PHPStan\Type\
 
 	public function removeFalsey(Type $type): Type
 	{
-		$falseyTypes = new UnionType([
-			new NullType(),
-			new ConstantBooleanType(false),
-			new ConstantIntegerType(0),
-			new ConstantFloatType(0.0),
-			new ConstantStringType(''),
-			new ConstantArrayType([], []),
-		]);
+		$falseyTypes = new UnionType(
+			[
+				new NullType(),
+				new ConstantBooleanType(false),
+				new ConstantIntegerType(0),
+				new ConstantFloatType(0.0),
+				new ConstantStringType(''),
+				new ConstantArrayType([], []),
+			]
+		);
 
 		if ($type instanceof ConstantArrayType) {
 			$keys = $type->getKeyTypes();

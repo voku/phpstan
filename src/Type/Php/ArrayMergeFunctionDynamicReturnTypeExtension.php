@@ -38,6 +38,7 @@ class ArrayMergeFunctionDynamicReturnTypeExtension implements \PHPStan\Type\Dyna
 				} else {
 					$argumentTypes[] = $iterableValueType;
 				}
+
 				continue;
 			}
 
@@ -49,6 +50,7 @@ class ArrayMergeFunctionDynamicReturnTypeExtension implements \PHPStan\Type\Dyna
 
 	/**
 	 * @param \PHPStan\Type\Type[] $types
+	 *
 	 * @return Type
 	 */
 	private function processType(
@@ -74,6 +76,7 @@ class ArrayMergeFunctionDynamicReturnTypeExtension implements \PHPStan\Type\Dyna
 				}
 
 				$arrayType = $newArrayBuilder->getArray();
+
 				continue;
 			}
 
@@ -81,6 +84,7 @@ class ArrayMergeFunctionDynamicReturnTypeExtension implements \PHPStan\Type\Dyna
 				$keyType = $type->getKeyTypes()[$i];
 				if ($keyType instanceof ConstantIntegerType) {
 					$arrayType = $arrayType->setOffsetValueType(null, $valueType);
+
 					continue;
 				}
 

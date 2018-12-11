@@ -11,6 +11,7 @@ class FunctionCallStatementFinder
 	/**
 	 * @param string[] $functionNames
 	 * @param mixed $statements
+	 *
 	 * @return \PhpParser\Node|null
 	 */
 	public function findFunctionCallInStatements(array $functionNames, $statements): ?\PhpParser\Node

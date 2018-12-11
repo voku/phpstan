@@ -36,8 +36,9 @@ class FunctionCallParametersCheck
 	/**
 	 * @param \PHPStan\Reflection\ParametersAcceptor $parametersAcceptor
 	 * @param \PHPStan\Analyser\Scope $scope
-	 * @param \PhpParser\Node\Expr\FuncCall|\PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall|\PhpParser\Node\Expr\New_ $funcCall
+	 * @param \PhpParser\Node\Expr\FuncCall|\PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\New_|\PhpParser\Node\Expr\StaticCall $funcCall
 	 * @param string[] $messages Eight message templates
+	 *
 	 * @return string[]
 	 */
 	public function check(
@@ -66,6 +67,7 @@ class FunctionCallParametersCheck
 		foreach ($funcCall->args as $arg) {
 			if ($arg->unpack) {
 				$invokedParametersCount = max($functionParametersMinCount, $functionParametersMaxCount);
+
 				break;
 			}
 		}

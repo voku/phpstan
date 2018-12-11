@@ -25,9 +25,12 @@ class TypeSpecifierFactory
 	public function create(): TypeSpecifier
 	{
 		$tagToService = function (array $tags) {
-			return array_map(function (string $serviceName) {
-				return $this->container->getService($serviceName);
-			}, array_keys($tags));
+			return array_map(
+				function (string $serviceName) {
+					return $this->container->getService($serviceName);
+				},
+				array_keys($tags)
+			);
 		};
 
 		$typeSpecifier = new TypeSpecifier(

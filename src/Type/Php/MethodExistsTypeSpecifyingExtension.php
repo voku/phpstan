@@ -51,10 +51,12 @@ class MethodExistsTypeSpecifyingExtension implements FunctionTypeSpecifyingExten
 
 		return $this->typeSpecifier->create(
 			$node->args[0]->value,
-			new IntersectionType([
-				new ObjectWithoutClassType(),
-				new HasMethodType($methodNameType->getValue()),
-			]),
+			new IntersectionType(
+				[
+					new ObjectWithoutClassType(),
+					new HasMethodType($methodNameType->getValue()),
+				]
+			),
 			$context
 		);
 	}

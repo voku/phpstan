@@ -30,6 +30,7 @@ class IterableInForeachRule implements \PHPStan\Rules\Rule
 	/**
 	 * @param \PhpParser\Node\Stmt\Foreach_ $node
 	 * @param \PHPStan\Analyser\Scope $scope
+	 *
 	 * @return RuleError[]
 	 */
 	public function processNode(Node $node, Scope $scope): array
@@ -51,10 +52,12 @@ class IterableInForeachRule implements \PHPStan\Rules\Rule
 		}
 
 		return [
-			RuleErrorBuilder::message(sprintf(
-				'Argument of an invalid type %s supplied for foreach, only iterables are supported.',
-				$type->describe(VerbosityLevel::typeOnly())
-			))->line($node->expr->getLine())->build(),
+			RuleErrorBuilder::message(
+				sprintf(
+					'Argument of an invalid type %s supplied for foreach, only iterables are supported.',
+					$type->describe(VerbosityLevel::typeOnly())
+				)
+			)->line($node->expr->getLine())->build(),
 		];
 	}
 

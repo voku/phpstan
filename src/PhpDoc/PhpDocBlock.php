@@ -224,9 +224,9 @@ class PhpDocBlock
 		bool $explicit
 	): ?self
 	{
-		if ($classReflection->getFileName() !== false && $classReflection->$hasMethodName($name)) {
-			/** @var \PHPStan\Reflection\PropertyReflection|\PHPStan\Reflection\MethodReflection $parentReflection */
-			$parentReflection = $classReflection->$getMethodName($name);
+		if ($classReflection->getFileName() !== false && $classReflection->{$hasMethodName}($name)) {
+			/** @var \PHPStan\Reflection\MethodReflection|\PHPStan\Reflection\PropertyReflection $parentReflection */
+			$parentReflection = $classReflection->{$getMethodName}($name);
 			if (
 				!$parentReflection instanceof PhpPropertyReflection
 				&& !$parentReflection instanceof PhpMethodReflection

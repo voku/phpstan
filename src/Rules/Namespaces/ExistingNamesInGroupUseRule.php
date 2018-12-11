@@ -42,6 +42,7 @@ class ExistingNamesInGroupUseRule implements \PHPStan\Rules\Rule
 	/**
 	 * @param \PhpParser\Node\Stmt\GroupUse $node
 	 * @param \PHPStan\Analyser\Scope $scope
+	 *
 	 * @return RuleError[]
 	 */
 	public function processNode(Node $node, Scope $scope): array
@@ -101,11 +102,13 @@ class ExistingNamesInGroupUseRule implements \PHPStan\Rules\Rule
 				strtolower($realName) === strtolower($usedName)
 				&& $realName !== $usedName
 			) {
-				return RuleErrorBuilder::message(sprintf(
-					'Function %s used with incorrect case: %s.',
-					$realName,
-					$usedName
-				))->build();
+				return RuleErrorBuilder::message(
+					sprintf(
+						'Function %s used with incorrect case: %s.',
+						$realName,
+						$usedName
+					)
+				)->build();
 			}
 		}
 
@@ -114,9 +117,11 @@ class ExistingNamesInGroupUseRule implements \PHPStan\Rules\Rule
 
 	private function checkClass(Node\Name $name): ?RuleError
 	{
-		$errors = $this->classCaseSensitivityCheck->checkClassNames([
-			new ClassNameNodePair((string) $name, $name),
-		]);
+		$errors = $this->classCaseSensitivityCheck->checkClassNames(
+			[
+				new ClassNameNodePair((string) $name, $name),
+			]
+		);
 		if (count($errors) === 0) {
 			return null;
 		} elseif (count($errors) === 1) {

@@ -112,22 +112,22 @@ final class ParseUrlFunctionDynamicReturnTypeExtension implements DynamicFunctio
 		$integerOrNull = TypeCombinator::addNull($integer);
 
 		$this->componentTypesPairedConstants = [
-			PHP_URL_SCHEME => $stringOrNull,
-			PHP_URL_HOST => $stringOrNull,
-			PHP_URL_PORT => $integerOrNull,
-			PHP_URL_USER => $stringOrNull,
-			PHP_URL_PASS => $stringOrNull,
-			PHP_URL_QUERY => $stringOrNull,
+			PHP_URL_SCHEME   => $stringOrNull,
+			PHP_URL_HOST     => $stringOrNull,
+			PHP_URL_PORT     => $integerOrNull,
+			PHP_URL_USER     => $stringOrNull,
+			PHP_URL_PASS     => $stringOrNull,
+			PHP_URL_QUERY    => $stringOrNull,
 			PHP_URL_FRAGMENT => $stringOrNull,
 		];
 
 		$this->componentTypesPairedStrings = [
-			'scheme' => $string,
-			'host' => $string,
-			'port' => $integer,
-			'user' => $string,
-			'pass' => $string,
-			'query' => $string,
+			'scheme'   => $string,
+			'host'     => $string,
+			'port'     => $integer,
+			'user'     => $string,
+			'pass'     => $string,
+			'query'    => $string,
 			'fragment' => $string,
 		];
 	}

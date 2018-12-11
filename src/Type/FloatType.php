@@ -33,10 +33,16 @@ class FloatType implements Type
 		}
 
 		if ($type instanceof CompoundType) {
-			return CompoundTypeHelper::accepts($type, new UnionType([
-				$this,
-				new IntegerType(),
-			]), $strictTypes);
+			return CompoundTypeHelper::accepts(
+				$type,
+				new UnionType(
+					[
+						$this,
+						new IntegerType(),
+					]
+				),
+				$strictTypes
+			);
 		}
 
 		return TrinaryLogic::createNo();
@@ -116,6 +122,7 @@ class FloatType implements Type
 
 	/**
 	 * @param mixed[] $properties
+	 *
 	 * @return Type
 	 */
 	public static function __set_state(array $properties): Type

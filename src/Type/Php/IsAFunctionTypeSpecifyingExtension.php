@@ -28,8 +28,8 @@ class IsAFunctionTypeSpecifyingExtension implements FunctionTypeSpecifyingExtens
 	public function isFunctionSupported(FunctionReflection $functionReflection, FuncCall $node, TypeSpecifierContext $context): bool
 	{
 		return strtolower($functionReflection->getName()) === 'is_a'
-			&& isset($node->args[0])
-			&& isset($node->args[1])
+			&& isset($node->args[0], $node->args[1])
+
 			&& !$context->null();
 	}
 

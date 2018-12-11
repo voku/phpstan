@@ -10,7 +10,9 @@ class IgnoredError
 
 	/**
 	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
+	 *
 	 * @param array<string, string>|string $ignoredError
+	 *
 	 * @return string Representation of the ignored error
 	 */
 	public static function stringifyPattern($ignoredError): string
@@ -29,9 +31,11 @@ class IgnoredError
 
 	/**
 	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
+	 *
 	 * @param FileHelper $fileHelper
 	 * @param Error $error
 	 * @param array<string, string>|string $ignoredError
+	 *
 	 * @return bool To ignore or not to ignore?
 	 */
 	public static function shouldIgnore(

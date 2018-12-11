@@ -38,6 +38,7 @@ class AnnotationsMethodsClassReflectionExtension implements MethodsClassReflecti
 	/**
 	 * @param ClassReflection $classReflection
 	 * @param ClassReflection $declaringClass
+	 *
 	 * @return MethodReflection[]
 	 */
 	private function createMethods(
@@ -91,11 +92,13 @@ class AnnotationsMethodsClassReflectionExtension implements MethodsClassReflecti
 				$this->detectMethodVariadic($parameters)
 			);
 		}
+
 		return $methods;
 	}
 
 	/**
 	 * @param AnnotationsMethodParameterReflection[] $parameters
+	 *
 	 * @return bool
 	 */
 	private function detectMethodVariadic(array $parameters): bool

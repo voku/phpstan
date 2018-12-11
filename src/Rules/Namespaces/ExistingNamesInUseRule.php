@@ -41,6 +41,7 @@ class ExistingNamesInUseRule implements \PHPStan\Rules\Rule
 	/**
 	 * @param \PhpParser\Node\Stmt\Use_ $node
 	 * @param \PHPStan\Analyser\Scope $scope
+	 *
 	 * @return RuleError[]
 	 */
 	public function processNode(Node $node, Scope $scope): array
@@ -68,6 +69,7 @@ class ExistingNamesInUseRule implements \PHPStan\Rules\Rule
 
 	/**
 	 * @param \PhpParser\Node\Stmt\UseUse[] $uses
+	 *
 	 * @return RuleError[]
 	 */
 	private function checkConstants(array $uses): array
@@ -86,6 +88,7 @@ class ExistingNamesInUseRule implements \PHPStan\Rules\Rule
 
 	/**
 	 * @param \PhpParser\Node\Stmt\UseUse[] $uses
+	 *
 	 * @return RuleError[]
 	 */
 	private function checkFunctions(array $uses): array
@@ -102,11 +105,13 @@ class ExistingNamesInUseRule implements \PHPStan\Rules\Rule
 					strtolower($realName) === strtolower($usedName)
 					&& $realName !== $usedName
 				) {
-					$errors[] = RuleErrorBuilder::message(sprintf(
-						'Function %s used with incorrect case: %s.',
-						$realName,
-						$usedName
-					))->line($use->name->getLine())->build();
+					$errors[] = RuleErrorBuilder::message(
+						sprintf(
+							'Function %s used with incorrect case: %s.',
+							$realName,
+							$usedName
+						)
+					)->line($use->name->getLine())->build();
 				}
 			}
 		}
@@ -116,14 +121,18 @@ class ExistingNamesInUseRule implements \PHPStan\Rules\Rule
 
 	/**
 	 * @param \PhpParser\Node\Stmt\UseUse[] $uses
+	 *
 	 * @return RuleError[]
 	 */
 	private function checkClasses(array $uses): array
 	{
 		return $this->classCaseSensitivityCheck->checkClassNames(
-			array_map(static function (\PhpParser\Node\Stmt\UseUse $use): ClassNameNodePair {
-				return new ClassNameNodePair((string) $use->name, $use->name);
-			}, $uses)
+			array_map(
+				static function (\PhpParser\Node\Stmt\UseUse $use): ClassNameNodePair {
+					return new ClassNameNodePair((string) $use->name, $use->name);
+				},
+				$uses
+			)
 		);
 	}
 

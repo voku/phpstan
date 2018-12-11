@@ -33,6 +33,7 @@ class ImpossibleCheckTypeMethodCallRule implements \PHPStan\Rules\Rule
 	/**
 	 * @param \PhpParser\Node\Expr\MethodCall $node
 	 * @param \PHPStan\Analyser\Scope $scope
+	 *
 	 * @return string[] errors
 	 */
 	public function processNode(Node $node, Scope $scope): array
@@ -48,6 +49,7 @@ class ImpossibleCheckTypeMethodCallRule implements \PHPStan\Rules\Rule
 
 		if (!$isAlways) {
 			$method = $this->getMethod($node->var, $node->name->name, $scope);
+
 			return [sprintf(
 				'Call to method %s::%s()%s will always evaluate to false.',
 				$method->getDeclaringClass()->getDisplayName(),
@@ -56,6 +58,7 @@ class ImpossibleCheckTypeMethodCallRule implements \PHPStan\Rules\Rule
 			)];
 		} elseif ($this->checkAlwaysTrueCheckTypeFunctionCall) {
 			$method = $this->getMethod($node->var, $node->name->name, $scope);
+
 			return [sprintf(
 				'Call to method %s::%s()%s will always evaluate to true.',
 				$method->getDeclaringClass()->getDisplayName(),

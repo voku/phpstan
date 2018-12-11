@@ -31,6 +31,7 @@ class IncompatiblePhpDocTypeRule implements \PHPStan\Rules\Rule
 	/**
 	 * @param \PhpParser\Node\FunctionLike $node
 	 * @param \PHPStan\Analyser\Scope $scope
+	 *
 	 * @return string[]
 	 */
 	public function processNode(Node $node, Scope $scope): array
@@ -127,6 +128,7 @@ class IncompatiblePhpDocTypeRule implements \PHPStan\Rules\Rule
 	/**
 	 * @param Node\FunctionLike $node
 	 * @param Scope $scope
+	 *
 	 * @return Type[]
 	 */
 	private function getNativeParameterTypes(\PhpParser\Node\FunctionLike $node, Scope $scope): array

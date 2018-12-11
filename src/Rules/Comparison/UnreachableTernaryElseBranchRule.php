@@ -30,6 +30,7 @@ class UnreachableTernaryElseBranchRule implements Rule
 	/**
 	 * @param \PhpParser\Node\Expr\Ternary $node
 	 * @param Scope $scope
+	 *
 	 * @return RuleError[]
 	 */
 	public function processNode(Node $node, Scope $scope): array

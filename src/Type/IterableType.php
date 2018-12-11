@@ -71,13 +71,19 @@ class IterableType implements StaticResolvableType, CompoundType
 	public function isSubTypeOf(Type $otherType): TrinaryLogic
 	{
 		if ($otherType instanceof IntersectionType || $otherType instanceof UnionType) {
-			return $otherType->isSuperTypeOf(new UnionType([
-				new ArrayType($this->keyType, $this->itemType),
-				new IntersectionType([
-					new ObjectType(\Traversable::class),
-					$this,
-				]),
-			]));
+			return $otherType->isSuperTypeOf(
+				new UnionType(
+					[
+						new ArrayType($this->keyType, $this->itemType),
+						new IntersectionType(
+							[
+								new ObjectType(\Traversable::class),
+								$this,
+							]
+						),
+					]
+				)
+			);
 		}
 
 		if ($otherType instanceof self) {
@@ -187,6 +193,7 @@ class IterableType implements StaticResolvableType, CompoundType
 
 	/**
 	 * @param mixed[] $properties
+	 *
 	 * @return Type
 	 */
 	public static function __set_state(array $properties): Type

@@ -36,37 +36,43 @@ class NodeScopeResolverTest extends \PHPStan\Testing\TestCase
 
 	public function testClassMethodScope(): void
 	{
-		$this->processFile(__DIR__ . '/data/class.php', function (\PhpParser\Node $node, Scope $scope): void {
-			if (!($node instanceof Exit_)) {
-				return;
-			}
+		$this->processFile(
+			__DIR__ . '/data/class.php',
+			function (\PhpParser\Node $node, Scope $scope): void {
+				if (!($node instanceof Exit_)) {
+					return;
+				}
 
-			$this->assertSame('SomeNodeScopeResolverNamespace', $scope->getNamespace());
-			$this->assertTrue($scope->isInClass());
-			$this->assertSame(Foo::class, $scope->getClassReflection()->getName());
-			$this->assertSame('doFoo', $scope->getFunctionName());
-			$this->assertSame('$this(SomeNodeScopeResolverNamespace\Foo)', $scope->getVariableType('this')->describe(VerbosityLevel::precise()));
-			$this->assertTrue($scope->hasVariableType('baz')->yes());
-			$this->assertTrue($scope->hasVariableType('lorem')->yes());
-			$this->assertFalse($scope->hasVariableType('ipsum')->yes());
-			$this->assertTrue($scope->hasVariableType('i')->yes());
-			$this->assertTrue($scope->hasVariableType('val')->yes());
-			$this->assertSame('SomeNodeScopeResolverNamespace\InvalidArgumentException', $scope->getVariableType('exception')->describe(VerbosityLevel::precise()));
-			$this->assertTrue($scope->hasVariableType('staticVariable')->yes());
-		});
+				$this->assertSame('SomeNodeScopeResolverNamespace', $scope->getNamespace());
+				$this->assertTrue($scope->isInClass());
+				$this->assertSame(Foo::class, $scope->getClassReflection()->getName());
+				$this->assertSame('doFoo', $scope->getFunctionName());
+				$this->assertSame('$this(SomeNodeScopeResolverNamespace\Foo)', $scope->getVariableType('this')->describe(VerbosityLevel::precise()));
+				$this->assertTrue($scope->hasVariableType('baz')->yes());
+				$this->assertTrue($scope->hasVariableType('lorem')->yes());
+				$this->assertFalse($scope->hasVariableType('ipsum')->yes());
+				$this->assertTrue($scope->hasVariableType('i')->yes());
+				$this->assertTrue($scope->hasVariableType('val')->yes());
+				$this->assertSame('SomeNodeScopeResolverNamespace\InvalidArgumentException', $scope->getVariableType('exception')->describe(VerbosityLevel::precise()));
+				$this->assertTrue($scope->hasVariableType('staticVariable')->yes());
+			}
+		);
 	}
 
 	private function getFileScope(string $filename): Scope
 	{
 		/** @var \PHPStan\Analyser\Scope $testScope */
 		$testScope = null;
-		$this->processFile($filename, static function (\PhpParser\Node $node, Scope $scope) use (&$testScope): void {
-			if (!($node instanceof Exit_)) {
-				return;
-			}
+		$this->processFile(
+			$filename,
+			static function (\PhpParser\Node $node, Scope $scope) use (&$testScope): void {
+				if (!($node instanceof Exit_)) {
+					return;
+				}
 
-			$testScope = $scope;
-		});
+				$testScope = $scope;
+			}
+		);
 
 		return $testScope;
 	}
@@ -8419,13 +8425,18 @@ class NodeScopeResolverTest extends \PHPStan\Testing\TestCase
 				],
 			]
 		);
-		$resolver->setAnalysedFiles(array_map(static function (string $file) use ($fileHelper): string {
-			return $fileHelper->normalizePath($file);
-		}, [
-			$file,
-			__DIR__ . '/data/methodPhpDocs-trait-defined.php',
-			__DIR__ . '/data/anonymous-class-name-in-trait-trait.php',
-		]));
+		$resolver->setAnalysedFiles(
+			array_map(
+				static function (string $file) use ($fileHelper): string {
+					return $fileHelper->normalizePath($file);
+				},
+				[
+					$file,
+					__DIR__ . '/data/methodPhpDocs-trait-defined.php',
+					__DIR__ . '/data/anonymous-class-name-in-trait-trait.php',
+				]
+			)
+		);
 
 		$resolver->processNodes(
 			$this->getParser()->parseFile($file),
@@ -8459,26 +8470,32 @@ class NodeScopeResolverTest extends \PHPStan\Testing\TestCase
 	 */
 	public function testDeclareStrictTypes(string $file, bool $result): void
 	{
-		$this->processFile($file, function (\PhpParser\Node $node, Scope $scope) use ($result): void {
-			if (!($node instanceof Exit_)) {
-				return;
-			}
+		$this->processFile(
+			$file,
+			function (\PhpParser\Node $node, Scope $scope) use ($result): void {
+				if (!($node instanceof Exit_)) {
+					return;
+				}
 
-			$this->assertSame($result, $scope->isDeclareStrictTypes());
-		});
+				$this->assertSame($result, $scope->isDeclareStrictTypes());
+			}
+		);
 	}
 
 	public function testEarlyTermination(): void
 	{
-		$this->processFile(__DIR__ . '/data/early-termination.php', function (\PhpParser\Node $node, Scope $scope): void {
-			if (!($node instanceof Exit_)) {
-				return;
-			}
+		$this->processFile(
+			__DIR__ . '/data/early-termination.php',
+			function (\PhpParser\Node $node, Scope $scope): void {
+				if (!($node instanceof Exit_)) {
+					return;
+				}
 
-			$this->assertTrue($scope->hasVariableType('something')->yes());
-			$this->assertTrue($scope->hasVariableType('var')->yes());
-			$this->assertTrue($scope->hasVariableType('foo')->no());
-		});
+				$this->assertTrue($scope->hasVariableType('something')->yes());
+				$this->assertTrue($scope->hasVariableType('var')->yes());
+				$this->assertTrue($scope->hasVariableType('foo')->no());
+			}
+		);
 	}
 
 	private function assertTypeDescribe(
