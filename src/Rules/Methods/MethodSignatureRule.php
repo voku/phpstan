@@ -6,6 +6,7 @@ use PhpParser\Node;
 use PhpParser\Node\Stmt\ClassMethod;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ClassReflection;
+use PHPStan\Reflection\MissingMethodFromReflectionException;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\TrinaryLogic;
 use PHPStan\Type\MixedType;
@@ -58,6 +59,17 @@ class MethodSignatureRule implements \PHPStan\Rules\Rule
 		if (!$this->reportStatic && $method->isStatic()) {
 			return [];
 		}
+
+		// Ignore methods from traits
+		foreach ($class->getTraits() as $trait) {
+			try {
+				$trait->getNativeMethod($method->getName());
+				return [];
+			} catch (MissingMethodFromReflectionException $e) {
+				continue;
+			}
+		}
+
 		$parameters = ParametersAcceptorSelector::selectSingle($method->getVariants());
 
 		$errors = [];
