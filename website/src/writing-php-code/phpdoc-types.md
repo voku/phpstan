@@ -123,7 +123,7 @@ function bar(string $name): void
 Other advanced string types
 -------------------------
 
-There's also `callable-string` and `numeric-string`.
+There's also `callable-string`, `numeric` (int|float|numeric-string) and `numeric-string`.
 
 Type aliases
 -------------------------
